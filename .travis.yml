@@ -27,7 +27,7 @@ script:
   - texliveonfly script.tex
   # You can use latexmk to automatically handle bibtex and references (recommended)
   #- latexmk -pdf script.tex
-  - pdflatex -synctex=1 -interaction=nonstopmode book.tex > custom_log.log
+  - pdflatex -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
   - cat custom_log.log
   - cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
   - ls -la $TRAVIS_BUILD_DIR/script/
@@ -58,4 +58,4 @@ deploy:
     local_dir: build
     target_branch: gh-pages
     on :
-        branch: master
+        branch: master, add-script 
