@@ -10,11 +10,14 @@ before_install:
 # - mkdir $HOME/.fonts
 # - cp -a $TRAVIS_BUILD_DIR/src/fonts/. $HOME/.fonts/
 # - fc-cache -f -v
+  - sudo apt-get update
+  - sudo apt-get install texlive-lang-german
   - sudo apt-get install biber -y
   - echo 'Check biber version...' && biber --version
   - sudo apt-get install texlive-base
-  - tlmgr init-usertree
-  - tlmgr install hyphen-german
+  - sudo tlmgr init-usertree
+  - sudo apt-get install gnuplot
+  #- sudo tlmgr install hyphen-german
 
 install:
   - cd $TRAVIS_BUILD_DIR/
@@ -32,9 +35,10 @@ script:
   - texliveonfly script.tex || true # Texliveonfly will download packages automatically #ignore errors here because tex will be recompiled
   # You can use latexmk to automatically handle bibtex and references (recommended)
   #- latexmk -pdf script.tex
-  - pdflatex -synctex=1 -interaction=nonstopmode script.tex -shell-escape || true # as preparation in order to run biber.
+  - pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex || true # as preparation in order to run biber.
   - biber script
-  - pdflatex -synctex=1 -interaction=nonstopmode script.tex -shell-escape > custom_log.log
+  - ls -la
+  - pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
   - cat custom_log.log
   - cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
   - $TRAVIS_BUILD_DIR/script/check_empty.sh
