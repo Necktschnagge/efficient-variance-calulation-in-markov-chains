@@ -12,7 +12,6 @@ before_install:
 # - fc-cache -f -v
   - sudo apt-get install biber -y
   - echo 'Check biber version...' && biber --version
-  - tlmgr install hyphen-german
      
 install:
   - cd $TRAVIS_BUILD_DIR/
