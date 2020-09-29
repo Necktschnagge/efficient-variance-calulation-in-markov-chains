@@ -26,9 +26,10 @@ cache:
 before_script:
   - cd $TRAVIS_BUILD_DIR/src/
 script:
-  - texliveonfly script.tex # Texliveonfly will download packages automatically
+  - texliveonfly script.tex || true # Texliveonfly will download packages automatically #ignore errors here because tex will be recompiled
   # You can use latexmk to automatically handle bibtex and references (recommended)
   #- latexmk -pdf script.tex
+  - pdflatex -synctex=1 -interaction=nonstopmode script.tex # as preparation in order to run biber.
   - biber script
   - pdflatex -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
   - cat custom_log.log
