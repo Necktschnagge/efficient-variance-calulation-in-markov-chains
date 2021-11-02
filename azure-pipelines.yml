@@ -39,10 +39,7 @@ stages:
        - script: git submodule update --init --recursive
          displayName: "Init Git Submodules"
          condition: succeeded()
-       ./texlive/texlive_install.sh
-  - sudo apt-get update
-  - sudo apt-get install biber gnuplot -y
-  - echo 'Check biber version...' && biber --version
+   
        - script: ./texlive/texlive_install.sh && sudo apt-get update && sudo apt-get install biber gnuplot -y && echo 'Check biber version...' && biber --version
          displayName: "Install dependencies"
          condition: succeeded()
