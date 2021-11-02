@@ -28,7 +28,7 @@ stages:
       pool:
         vmImage: $(image_name)
         name: $(agent_pool_name)
-      condition: eq(variables['Build.Reason'], 'IndividualCI')
+      #condition: eq(variables['Build.Reason'], 'IndividualCI')
       timeoutInMinutes: 30
       steps:
        #Boost
