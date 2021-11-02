@@ -40,6 +40,9 @@ stages:
          displayName: "Init Git Submodules"
          condition: succeeded()
    
+       - script: sudo apt-get install texlive-lang-german
+         displayName: "Install dependencies"
+         condition: succeeded()
        - script: cd texlive && sudo ./texlive_install.sh 
          displayName: "Install dependencies"
          condition: succeeded()
