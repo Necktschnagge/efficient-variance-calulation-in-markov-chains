@@ -1,0 +1,62 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  branches:
+    include:
+    - '*'
+    exclude:
+    - artifacts
+
+
+stages:
+ - stage: build_latex
+      
+   jobs:
+    - job: build_latex_script
+      strategy:
+        matrix:
+          ubuntu_20_04:
+            image_name: 'ubuntu-20.04'
+            agent_pool_name: 'Azure Pipelines'
+
+#          Ubuntu_20_04:
+#            agent_pool_name: 'Performance'
+            
+      pool:
+        vmImage: $(image_name)
+        name: $(agent_pool_name)
+      condition: eq(variables['Build.Reason'], 'IndividualCI')
+      timeoutInMinutes: 30
+      steps:
+       #Boost
+#       - script: sudo apt-get install libboost-all-dev libtbb-dev
+#         displayName: "Linux: Install Boost"
+#         condition: and(succeeded(), eq( variables['Agent.OS'], 'Linux' ))
+       #real Tasks:
+       - script: git submodule update --init --recursive
+         displayName: "Init Git Submodules"
+         condition: succeeded()
+       ./texlive/texlive_install.sh
+  - sudo apt-get update
+  - sudo apt-get install biber gnuplot -y
+  - echo 'Check biber version...' && biber --version
+       - script: ./texlive/texlive_install.sh && sudo apt-get update && sudo apt-get install biber gnuplot -y && echo 'Check biber version...' && biber --version
+         displayName: "Install dependencies"
+         condition: succeeded()
+#       - script: cmake --build ./build
+#         displayName: "CMake: Compile and Link"
+#         condition: succeeded()
+#       
+#       - script: ./build/src/Syntactic-Reducer ./res/config.json
+#         displayName: "Run Syntactic-Reducer with given config.json"
+#         condition: and(succeeded(), ne( variables['Agent.OS'], 'Windows_NT'))
+#       - script: ls -la ./RESULTS/
+#         displayName: "Check directory content of RESULTS"
+#         condition: and(succeeded(), ne( variables['Agent.OS'], 'Windows_NT'))
+#       - script: ./script/ci/upload-generated-models.sh "$(USER_NAME)" "$(PERSONAL_ACCESS_TOKEN)"
+#         displayName: "Upload generated models"
+#         condition: and(succeeded(), ne( variables['Agent.OS'], 'Windows_NT'))
+         
