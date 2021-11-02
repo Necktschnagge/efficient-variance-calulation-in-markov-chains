@@ -40,8 +40,14 @@ stages:
          displayName: "Init Git Submodules"
          condition: succeeded()
    
-       - script: ./texlive/texlive_install.sh && sudo apt-get update && sudo apt-get install biber gnuplot -y && echo 'Check biber version...' && biber --version
+       - script: sudo ./texlive/texlive_install.sh 
          displayName: "Install dependencies"
+         condition: succeeded()
+       - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
+         displayName: "install biber"
+         condition: succeeded()
+       - script: echo 'Check biber version...' && biber --version
+         displayName: "Biber"
          condition: succeeded()
 #       - script: cmake --build ./build
 #         displayName: "CMake: Compile and Link"
