@@ -40,7 +40,7 @@ stages:
          displayName: "Init Git Submodules"
          condition: succeeded()
    
-       - script: sudo ./texlive/texlive_install.sh 
+       - script: cd texlive && sudo ./texlive_install.sh 
          displayName: "Install dependencies"
          condition: succeeded()
        - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
