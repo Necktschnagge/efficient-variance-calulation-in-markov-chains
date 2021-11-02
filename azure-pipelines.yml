@@ -43,7 +43,7 @@ stages:
        - script: sudo apt-get install texlive-lang-german
          displayName: "Install dependencies"
          condition: succeeded()
-       - script: cd texlive && sudo ./texlive_install.sh 
+       - script: sudo ./texlive/texlive_install.sh 
          displayName: "Install dependencies"
          condition: succeeded()
        - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
