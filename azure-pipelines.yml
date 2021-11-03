@@ -40,7 +40,7 @@ stages:
          displayName: "Init Git Submodules"
          condition: succeeded()
    
-       - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
+       - script: sudo apt-get install texlive && sudo apt-get update && sudo apt-get install biber gnuplot -y
          displayName: "install biber"
          condition: succeeded()
 #       - script: tlmgr init-usertree
