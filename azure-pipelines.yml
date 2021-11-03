@@ -40,9 +40,9 @@ stages:
          displayName: "Init Git Submodules"
          condition: succeeded()
    
-#       - script: sudo apt-get install texlive-lang-german
-#         displayName: "Install via apt-get"
-#         condition: succeeded()
+       - script: sudo apt-get install texlive-lang-german
+         displayName: "Install via apt-get"
+         condition: succeeded()
 #       - script: tlmgr init-usertree
 #         displayName: "tlmgr"
 #         condition: succeeded()
