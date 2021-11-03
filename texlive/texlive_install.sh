@@ -24,7 +24,7 @@ fi
 
 # Just including texlua so the cache check above works
 echo init-usertree
-tlmgr init-usertree
+#tlmgr init-usertree
 echo 1
 tlmgr install luatex
 echo 2
