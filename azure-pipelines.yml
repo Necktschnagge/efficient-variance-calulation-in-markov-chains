@@ -43,6 +43,9 @@ stages:
        - script: sudo apt-get install texlive-lang-german
          displayName: "Install dependencies"
          condition: succeeded()
+#       - script: tlmgr init-usertree
+#         displayName: "tlmgr"
+#         condition: succeeded()
        - script: ./texlive/texlive_install.sh 
          displayName: "Install dependencies"
          condition: succeeded()
