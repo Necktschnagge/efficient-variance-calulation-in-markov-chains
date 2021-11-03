@@ -28,6 +28,8 @@ echo init-usertree
 echo 1
 tlmgr install luatex
 echo 2
+sudo tlmgr install texliveonfly
+
 # We specify the directory in which it is located texlive_packages
 tlmgr install $(sed 's/\s*#.*//;/^\s*$/d' texlive/texlive_packages)
 echo 3

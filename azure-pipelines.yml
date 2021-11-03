@@ -43,12 +43,12 @@ stages:
 #       - script: tlmgr init-usertree
 #         displayName: "tlmgr"
 #         condition: succeeded()
-       - script: ./texlive/texlive_install.sh 
+       - script: sudo ./texlive/texlive_install.sh 
          displayName: "Install dependencies via script"
          condition: succeeded()
-       - script: sudo apt-get install texlive-lang-german
-         displayName: "Install via apt-get"
-         condition: succeeded()
+#       - script: sudo apt-get install texlive-lang-german
+#         displayName: "Install via apt-get"
+#         condition: succeeded()
        - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
          displayName: "install biber"
          condition: succeeded()
