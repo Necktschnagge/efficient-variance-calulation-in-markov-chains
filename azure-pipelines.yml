@@ -49,14 +49,14 @@ stages:
 #       - script: sudo apt-get install texlive-lang-german
 #         displayName: "Install via apt-get"
 #         condition: succeeded()
-       - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
-         displayName: "install biber"
-         condition: succeeded()
+#       - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
+#         displayName: "install biber"
+#         condition: succeeded()
          
          
-       - script: echo 'Check biber version...' && biber --version
-         displayName: "Biber"
-         condition: succeeded()
+#       - script: echo 'Check biber version...' && biber --version
+#         displayName: "Biber"
+#         condition: succeeded()
 
 
        - script: cd src && texliveonfly script.tex || true
