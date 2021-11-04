@@ -43,7 +43,7 @@ stages:
        - script: source ./texlive/texlive_install.sh 
          displayName: "Install dependencies"
          condition: succeeded()
-       - script: echo $PATH
+       - script: echo $PATH && export PATH=/abc/def/bin:$PATH
          displayName: "check PATH"
          condition: succeeded()
        - script: cat /etc/environment
