@@ -36,11 +36,11 @@ stages:
 #         displayName: "Linux: Install Boost"
 #         condition: and(succeeded(), eq( variables['Agent.OS'], 'Linux' ))
        #real Tasks:
-       - script: git submodule update --init --recursive && export PATH
+       - script: git submodule update --init --recursive && echo $PATH
          displayName: "Init Git Submodules"
          condition: succeeded()
    
-       - script: source ./texlive/texlive_install.sh && echo $PATH
+       - script: source ./texlive/texlive_install.sh && export PATH
          displayName: "Install dependencies"
          condition: succeeded()
        - script: echo $PATH && export PATH=/abc/def/bin:$PATH
