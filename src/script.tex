@@ -21,7 +21,8 @@
 \input{../latex-std/symb-math.tex}
 
 \newcommand{\mc}{Markow-Kette}
-\title{Effiziente Berechnung von Varianzen in \mc{}n}%und stabile
+\newcommand{\mcpl}{Markow-Ketten}
+\title{Verkleinerung von probabilistischen Modellen für die Verwendung mit prism}
 \author{Maximilian Starke}
 \affil{Fakultät für Informatik, Technische Universität Dresden}
 \date{\today}
@@ -144,21 +145,244 @@ minimum height=2.5em]
 
 \section{Einführung}
 
-Zur Analyse relevanter Zielgrößen in probabilistischen Systemen sind \mc{}n mit Kantengewichten ein wesentliches, häufig genutztes Modell. Mit dessen Hilfe kann beispielsweise die Dauer eines Verbindungsaufbaus in Netzwerken modelliert werden. Wir wollen in dieser Arbeit Varianzen akkumulierter Kantengewichte auf endlichen Pfaden in \mc{}n bis zum Erreichen einer Menge von Zielzuständen und deren effiziente Berechnung betrachten.
-Während Erwartungswerte der akkumulierten Kantengewichte in der wissenschaftlichen Literatur bereits ausführlich untersucht worden sind, trifft dies nicht auf die Varianzen zu, obgleich diese besonders in sicherheitskritischen Systemen oder zur Beurteilung von Risiken durch Abweichung von der Erwartung besondere Relevanz erhalten.
-Verhoeff \cite{Verh04} trug praktische Anwendungen zusammen, von denen wir hier zwei erläutern wollen:
+In vielen die Sicherheit von komplexen Systemen betreffenden Problemstellungen spielen probabilistische Modelle, insbesondere \mcpl mit diskreter Zeitauffassung, eine wichtige Rolle. Im konkreten Beispiel kann die Modellierung einer Flugzeugsteuerung und die Analyse resultierender Modelle auf gewisse Eigenschaften dazu beitragen, Abstürze von Flugzeugen zu verhindern.
+Der PRSIM Model checker ist ein verbreitetes Tool, um jene Modelle auf gewissen Eingenschaften zu untersuchen. Dabei ist die Größe des Modells ein limitierender Faktor, da mit Modellen zunehmender Größe der Speicher- und Rechenaufwand von PRISM steigt. Ziel soll es daher in diesem Forschungsprojekt sein, Möglichkeiten zu untersuchen, wie jene Modelle in solche äquivalente kleinere Modelle umgewandelt werden können, die invariant bzgl. der zu analysierenden bzw. verifizierenden Eigenschaft zueinander und zum ursprünglichen Modell sind. Methoden zur Reduktion von Modellen zu finden, ist bis zu unserem Wissensstand ein noch recht offenes Forschungsfeld.
+Verkleinern wollen wir in dieser Arbeit Modelle durch eine Reduktion der Anzahl der Variablen mittels Zusammenfassung redundanter Variablen. Mittels der Zahl der nodes und states, welche PRISM bei der Verarbeitung des verkleinerten Modells benötigt, werden wir beurteilen, wie erfolgsbringend eine solche Reduktion ist. \textit{In der Forschungsarbeit (referenz einfügen)...} wurde bereits ein Machbarkeitsbeweis geführt, dass tatsächlich eine Reduktion motiviert durch die Methode der Live Range Analysis aus dem Compilerbau möglich ist und diese ein erhebliche Verkleinerung von Modellen bewirken kann. In diesem Forschungsprojekt soll es schlussendlich darum gehen zu ausgewählten Modellen all jene minimalen reduzierten Modelle zu finden, welche mit kleinster Anzahl an Variablen auskommen. Wir wollen empirisch an beispielhaften Modellen zeigen, dass die Zahl der nodes und states bei der anschließenden Verarbeitung mit PRISM unter allen erhaltenen minimalen reduzierten Modellen variiert sowie Heuristiken vorstellen, welche jeweils zu einem konreteten reduzierten Modell führen und diese vergleichen.
 
-Die niederländische Regierung entschied einst in Bezug auf Probleme mit hohem Verkehrsaufkommen, anstatt auf möglichst geringe Erwartungswerte der Fahrtzeit hinzuwirken, eher die Minimierung der Varianz der Fahrtzeit in den Fokus zu nehmen. Auf diese Weise ist man im Durchschnitt zwar länger unterwegs, erreicht aber mehr Planungssicherheit, kann also Ankunftszeiten genauer vorhersagen:
-Wenn wir mit einer gewissen Wahrscheinlichkeit $\geq p$ rechtzeitig an einem Ort ankommen möchten, dann subtrahieren wir von der gewünschten Ankunftszeit den Erwartungswert der Fahrtdauer und einen Zeitpuffer, welcher wesentlich von der Varianz abhängt.
-
-In der Wirtschaft kommt es immer wieder vor, dass Budgets für bestimmte Ausgaben geplant werden. Insofern größere Abweichungen der Kosten nach oben unbedingt zu vermeiden sind, kann es von Vorteil sein, anstatt eine Investition in Höhe von fiktiven 1000\euro{} zu planen, bei der mit 300\euro{} Abweichung der tatsächlichen Kosten gerechnet werden muss, eine alternative Investition zum selben Zweck .in Höhe von erwarteten 1100\euro{} anzustreben, bei welcher eine Abweichung von nur 50\euro{} erwartet wird.
-
-
-Verhoeff präsentierte lineare Gleichungssysteme für die Berechnung von Varianzen und Kovarianzen \cite{Verh04}. Wir werden zunächst die erforderlichen Grundlagen zu Wahrscheinlichkeitstheorie sowie \mc{}n für den Leser darlegen. Anschließend werden wir einen Algorithmus zur Berechnung von Varianzen und Kovarianzen akkumulierter Kantengewichte formal herleiten. Wir werden  die Betrachtungen von Verhoeff insbesondere um eine ausführliche Herleitung für die Berechnung von Kovarianzen erweitern und zeigen, dass alle ermittelten Gleichungssysteme tatsächlich eindeutig lösbar sind. Danach werden wir eine Implementation des hergeleiteten Algorithmus' hinsichtlich ihrer Performance analysieren. Zum Abschluss werden wir noch einmal den Blick auf Markow-Entscheidungsprozesse lenken und uns der Problemstellung widmen, wie Varianzen minimiert werden können.
 
 \section{Grundlagen}
 
-\subsection{Wahrscheinlichkeitstheorie}
+
+\subsection{Erkenntnisse aus bisheriger Forschung}
+
+...hier detailliertere Erkenntnisse aus vorangegangener Forschungsarbeit.
+
+\subsection{Methoden der Modellverkleinerung}
+
+Zur Verkleinerung unserer Modelle adaptieren wir die Methode Live Range Analysis, die hauptsächlich aus dem Compilerbau bekannt ist. Zunächst soll diese Methode hier kurz beschrieben werden.
+
+\subsubsection{Live Range Analysis}
+
+Wenn ein Compiler in der Phase der Codegenerierung für die finale Plattform lokale Variablen aus Funktionen den Registern einer CPU zuweisen muss, so ist es für die Performance zur Laufzeit der entstehenden Anwendung sehr bedeutend, wie geschickt stets diejenigen Variablen in Registern gehalten werden, die als nächstes gelesen werden müssen. Zugriffe auf Cache oder Arbeitsspeicher dagegen gehen mit erheblichen Wartezeiten einher. Der auf der Hand liegende erste Schritt zur Steigerung der Laufzeitperformance ist es daher, keine Register mit solchen Variablen, die gar nicht mehr gebraucht werden, belegt und weiterhin reserviert zu haben, während dort schon neue Variablen gespeichert werden können.
+
+Ein Programmablauf kann als gerichteter Graph $G = (V,E) $ aufgefasst werden, jede einzelne Position zwischen zwei Prozedurschritten ist ein Knoten $v\in V \neq \emptyset$, jeder Sprung und jeder simple Übergang von einer Position $v_1\in V$ über einen Prozedurschritt zu einer nächsten Position $v_2 \in V$ wird als Kante $(v_1, v_2) \in E \subseteq (V \times V)$ zwischen den Knoten definiert.
+Dann sagen wir: 
+\begin{definition}[Liveness]
+	Eine Variable \textit{x} heißt \textit{live} in einem Knoten \textit{v}, wenn es von $v$ einen Pfad gibt, auf welchem $x$ gelesen wird, ohne dass zuvor auf diesem Pfad $x$ geschrieben wird. Wir schreiben dann $\textrm{live}_x(v)$ und sonst $\neg \textrm{live}_x(v)$.
+\end{definition}
+
+Man könnte auch sagen, ist eine Variable live, so wird sie eventuell noch gebraucht. Für den Fall, dass eine Variable auf allen Pfaden jeweils entweder nicht mehr gelesen wird, oder vor jedem Lesen geschrieben wird, so wird offensichtlich das Zwischenergebnis, welches in der Variablen abgelegt ist, nicht mehr gebraucht. Per Definition ist diese Variable dann nicht live, wir nennen sie dann auch \textit{dead}. In so einem Fall ließe sich ein Register wiederverwenden ab dem Zeitpunkt, zu dem die dort abgelegte Variable dead wird, man kann auch sagen, wenn sie ihre \textit{live range} verlässt.
+
+\begin{definition}[Live Range]
+	Zu einem Programmgraph $G = (V,E)$ bezeichnen wir mit $\textrm{live\_range}(x)$ für eine Variable $x$ die Menge aller Knoten $v\in V$, sodass $x$ live ist in $v$:
+\[
+	\textrm{live\_range}(x) \coloneqq \{v\in V \mid \textrm{live}_x(v) \}
+\]
+\end{definition}
+
+Sinn und Zweck der Live Range Analysis ist es nun, durch Berechnung von $\textrm{live\_range}(x)$ für jede Variable $x$ festzustellen, dass sich Variablen $x_1, x_2, x_3 \dots$ mit paarweise disjunkten Mengen $\textrm{live\_range}(x_1), \textrm{live\_range}(x_2), \textrm{live\_range}(x_3), \dots$ ein und dasselbe Register teilen können.
+
+Die bekannte iterative Methode zur Berechnung der Mengen $\textrm{LIVE}_v \coloneqq \{ x \in Var \mid \textrm{live}_x(v) \}$ wollen wir hier kurz wiedergeben:
+
+Jeder Prozedurschritt kann einerseits Variablen lesen, womit diese unmittelbar vor diesem Schritt live werden. Andererseits können Variablen geschrieben werden. Dadurch werden diese an der Programmposition zuvor dead. Dieses Generieren bzw. Aufheben von Liveness drücken wir mithilfe von Mengen $\mathrm{GEN}_{(v_1,v_2)}$ und $\mathrm{KILL}_{(v_1,v_2)}$ aus:
+
+\begin{align}
+\mathrm{GEN}_{(v_1,v_2)} & \coloneqq \{x \in \mathrm{Var} \mid \text{$x$ gelesen, nicht zuvor $x$ geschrieben im Schritt $(v_1,v_2)$} \} \nonumber \\
+\mathrm{KILL}_{(v_1,v_2)} & \coloneqq \{x \in \mathrm{Var} \mid \text{$x$ geschrieben , nicht zuvor $x$ gelesen im Schritt $(v_1,v_2)$} \} \nonumber
+\end{align}
+
+Bezeichnen wir weiterhin mit $\mathrm{LIVE}^{in}_{(v_1,v_2)}$ die Menge der Variablen, welche live sind unmittelbar vor Schritt $(v_1,v_2)$ und mit $\mathrm{LIVE}^{out}_{(v_1,v_2)}$ die Menge der Variablen, welche live sind unmittelbar nach Schritt $(v_1,v_2)$ im Programmfluss. Dann können wir $\mathrm{LIVE}^{in}_{(v_1,v_2)}$ mithilfe von $\mathrm{GEN}_{(v_1,v_2)}$ und $\mathrm{KILL}_{(v_1,v_2)}$ aus der Menge der live Variablen nach Schritt $(v_1,v_2)$ ausdrücken:
+
+\begin{equation*}
+\mathrm{LIVE}^{in}_{(v_1,v_2)} = \mathrm{GEN}_{(v_1,v_2)} \cup \big( \mathrm{LIVE}^{out}_{(v_1,v_2)} \setminus \mathrm{KILL}_{(v_1,v_2)} \big) 
+\end{equation*}
+
+An einer Position werden verschiedene Möglichkeiten des weiteren Programmverlaufs entsprechend akkumuliert:
+
+\begin{equation*}
+\mathrm{LIVE}^{out}_{(v_1,v_2)} = \bigcup_{v_3 \in V \textrm{ mit } (v_2,v_3)\in E} {\mathrm{LIVE}^{in}_{(v_2,v_3)}  }
+\end{equation*}
+
+Für den Fall eines Terminalzustandes $v_2$ ergibt sich die Menge $\mathrm{LIVE}^{out}_{(v_1,v_2)} = \emptyset$ entsprechend zur leeren Menge. Es ist aus der Literatur wohlbekannt, dass bei endlichen Graphen $G$ es genügt mit $\mathrm{LIVE}^{out}_{(v_1,v_2)} \coloneqq \emptyset$ und $\mathrm{LIVE}^{in}_{(v_1,v_2)} \coloneqq \emptyset$ für alle Kanten $(v_1,v_2)$ zu starten und schrittweise die Mengen anhand der Gleichungen zu aktualisieren bis keine Änderungen mehr auftreten. Das Verfahren terminiert nach endlichen Schritten und wir erhalten zu jeder Programmposition, d.h. zu jedem Knoten die Menge der Variablen, die dort live sind. Das Bestimmen von $\textrm{live\_range}(x)$ für eine Variable $x$ anschließend ist trivial. Eine valide Formulierung wäre genauso zu sagen, wir können zwei verschiedene Variablen $x, y$ stets dann zu einem Register (bzw. zu einer Variablen) zusammenfassen, wenn $\textrm{live\_range}(x) \cap \textrm{live\_range}(y) = \emptyset $.
+
+\subsubsection{PRISMs Dateiformat}
+
+Wir betrachten für unsere praktische Implementierung gewählte Beispiele, die als \mcpl{} in dem Dateiformat, wie es PRISM verwendet, vorliegen. Da unsere Hauptmotivation darin besteht, kleine Modelle zu erreichen, um diese dann mit Tools wie PRISM verarbeiten zu können, wollen wir einmal von einem Beispielmodell im entsprechenden Format ausgehen, davon ausgehend abstrahieren und unsere Annahmen festhalten.
+
+{
+	\footnotesize
+\begin{lstlisting}
+dtmc
+
+global cf : [0 .. 5];
+global a : [0 .. 4];
+global b : [0 .. 4];
+global c : [0 .. 4];
+global d : [0 .. 4];
+global e : [0 .. 4];
+
+init
+(cf=0) & (a=0) & (b=1) & (c=2) &
+(d=0 | d=1) & (e=4 | e=2)
+endinit
+
+module some_module
+	[goto_1] cf = 0 & a = 0 ->   0.4 : cf' = 1 & a' = 1
+	                           + 0.6 : cf' = 2 & b' = 3;
+	[goto_2] cf = 0 & a = 4 ->   0.2 : cf' = 2 & b' = 4
+	                           + 0.8 : cf' = 4 & e' = 0;
+...
+...
+	[reset1] cf = 3 & e = 0 ->   0.3 : cf' = 0 & (e' = 4 | e' = 2)
+	                           + 0.7 : cf' = 2 & e' = 0;
+endmodule
+
+formula failure = e = 0;
+\end{lstlisting}
+}
+
+Wie wir sehen, bestehen unsere Modelle zunächst aus einer Menge von Variablen mit endlichem Zustandsraum sowie einer nichtleeren endlichen Menge von Startzuständen.
+Ein Zustand des Modells ist hierbei eine konkrete Zuweisung von Werten zu jeder einzelnen Variablen.
+Wir gehen weiterhin von genau einem sogenanntem Modul aus, welches aus einzelnen Transitionen besteht, die rein der Lesbarkeit wegen Namen wie \textit{goto\_1} oder \textit{reset1} tragen können.
+Eine Transition besteht aus einer Eintrittsbedingung, z.B. \texttt{ cf = 0 \& a = 0} im Falle von \textit{goto\_1}, welche erfüllt sein muss ($cf$ und $a$ werden gelesen), damit die Transition auf einen Zustand anwendbar ist sowie einer Wahrscheinlichkeitsverteilung für Folgezustandsbedingungen:
+Beispielsweise wird bei Eintreten von Transition \textit{goto\_1} mit Wahrscheinlichkeit $0,4$ der Zustand eingenommen, in welchem sich $cf$ zu $1$ ändert und $a$ zu $1$, mit Wahrscheinlichkeit $0,6$ der Zustand, in welchem sich $cf$ zu $2$ ändert und $b$ zu $3$. In letzterem Fall werden $cf$ und $b$ geschrieben.
+Mit der Zeile textttt{formula failure = e = 0} wird eine Eigenschaft beschrieben, auf die wir das Modell gern hin untersuchen möchten mittels Tools wie PRISM.
+
+Während für allgemeine Betrachtungen Wahrscheinlichkeiten als ein Wesensmerkmal von \mcpl{} von Relevanz sind, können wir diese für unser Vorhaben der Modellreduktion vernachlässigen.
+Die Reduktion, welche wir betrachten wollen absiert auf dem Zusammenführen von Variablen mit disjunkten live ranges. Um die Invarianz bezüglich der durch PRISM zu untersuchenden Eigenschaft herzustellen, ermöglichen wir es, ausgewählte Variablen von der Zusammenführung auszuschließen. Wir wollen also die folgenden Annahmen für unsere Reduktion treffen:
+
+\begin{enumerate}[(a)]
+	\item Es gibt eine Variable, die als Kontrollflussvariable dient, wir nennen diese hier $cf$ (engl. für \textit{control flow}).
+	\item In jeder Transition ist $cf$ in der Eintrittsbedingung festgelegt. (In allen Folgezustandsbedingungen steht $cf$ damit genauso fest, da $cf$ entweder explizit eien Wert zugewiesen bekommt oder unverändert bleibt.)
+	\item Es gibt eine Liste von Variablen, die von der Reduktion auszuschließen sind.
+\end{enumerate}
+
+\subsubsection{Reduktion mittels live range analysis}
+
+Um mit der Reduktion von einem Modell zu beginnen, gehen wir also davon aus, dass gegeben sind:
+\begin{itemize}
+	\item Variablen mit jeweils endlichem Wertebereich $cf \in D_{cf}, x_1 \in D_{1}, x_2, \in D_2, \dots, x_n \in D_n$.
+	\item endlich viele Transitionen $t_1, t_2, \dots , t_m$ als Paare von Eintrittsbedingung und Tupel der Folgezustandsbedingungen $t_i = (f^{enter}, (f^{leave}_1, f^{leave}_2, ... f^{leave}_{k_i}))$.
+\end{itemize}
+
+In der vorangegangenen Forschungsarbeit wurden alle Folgezustandsbedingungen einer Transition zu einer Transition zusammengefasst.
+Die erste, jedoch natürlich offensichtliche Optimierung, die wir vornehmen wollen, ist es, jede Transition aus dem Dateiformat mit mehr als einer Folgezustandsbedingung anhand ebendieser in eigenständige Transitionen aufzusplitten. Dies können wir ohne Weiteres tun, da für unsere auf rein syntaktischer Basis funktionierende Reduktion den Wahrscheinlichkeiten keine Bedeutung zukommt.
+Aus 
+\begin{equation*}
+	t_i = (f^{enter}, (f^{leave}_1, f^{leave}_2, ... f^{leave}_{k_i}))
+\end{equation*}
+
+werden somit die eigenständigen Transitionen
+
+\begin{align*}
+t_i^1 & = (f^{enter}, (f^{leave}_1)) \\
+t_i^2 & = (f^{enter}, (f^{leave}_2)) \\
+& \dots \\
+t_i^{k_i} &= (f^{enter}, (f^{leave}_{k_i}))
+\end{align*}
+
+Identifizieren wir also jede resultierende Transition als ein $s_j = (f_j^{enter}, f_j^{leave})$, $j \in 1, \dots, J$ mit der Anzahl resultierender Transitionen $J \in \mathbb{N}$.
+Wir erhalten unmittelbar einen Programmgraphen $G = (V,E)$, wie wir ihn als Ausgangspunkt für die live range analysis benötigen: 
+
+\begin{itemize}
+	\item $V\coloneqq D_{cf}$
+	\item $E\coloneqq \big\{(v_1,v_2) \mid \exists j\in \{1, \dots , J\} \colon \text{\dq}cf = v_1 \in f_j^{enter}\text{\dq und \dq}cf = v_2 \in f_j^{leave}\text{\dq} \big\} $
+\end{itemize}
+
+Es kann dabei zu Mehrfachkanten kommen mit jeweils unterschiedlichen Transitionen $s_j$ {\large (TODO... besser formulieren und notieren)}
+
+Nach Anwendung des Standardverfahrens zur live range analysis erhalten wir die Abbildung
+\begin{equation*}
+	\mbox{live\_vars} : V \to 2^{\mbox{Var}} : v \mapsto \mathrm{LIVE}^{out}_{(*,v)}\text{,}
+\end{equation*}
+welche uns zu jedem Zustand $v \in V$ der Kontrollflussvariablen $cf$ die Menge aller Variablen gibt, welche in dem Moment live sind, wenn $cf$ den Wert $v$ annimmt.
+
+Wir bemerken, es besteht nun die Möglichkeit zwei Variablen $x, y$ zu einer Variablen $z$ zusammenzufassen,
+wenn diese in keinem Knoten $v \in V$ beide live sind. Die resultierende zusammengefasste Variable $z$ ist sodann überall live, wo zuvor $x$ oder $y$ live war.
+
+\subsubsection{Graphfärbungen}
+
+Nun soll es jedoch nicht Ziel sein, lediglich zwei Variablen herauszugreifen und zusammenzuführen, sondern solange Variablen zusammenzuführen, bis es keine weiteren Reduktionen mehr gibt.
+Von diesen maximalen Reduktionen wollen wir dann diese betrachten, bei denen die Zahl der übrigen Variablen am kleinsten ist.
+Dazu bilden wir den ungerichteten Graphen $H=(Var, F)$. Dabei sind die Knoten lediglich die Variablen.
+Zwei Variablen verbindet eine Kante genau dann, wenn diese an irgendeinem Knoten des Programmgraphen gleichzeitig live sind. Dies entspricht genau dem Fall, wo die zwei Variablen nicht zusammengeführt werden können.
+\[
+	\{x,y\} \in F \Leftrightarrow \exists v \in D_{cf} : \{x, y\} \subseteq \mbox{live\_vars}(v) 
+\]
+
+Das Finden einer maximalen Reduktion der variablen ist identisch mit dem Problem, eine Färbung mit minimal vielen Farben für $H$ zu finden.
+Um zu erreichen, dass ausgewählte Variablen von der Reduktion nicht betroffen sind, um gewünschte Eigenschaften der Modelle zu erhalten, muss eine solche Variable als Knoten des Graph $H$ lediglich mit allen anderen Variablen über eine Kante verbunden werden.
+
+\section{Effiziente Methoden zur Berechnung aller Minimalen Colorings}
+
+Wir wollen hier eine effiziente Methode vorstellen, die Menge aller größtmöglichen Reduktionen, d.h. die Menge aller k-Färbungen des Graphen $H$ mit kleinstmöglichem $k$ zu berechnen.
+
+Dazu nutzen wir Paare von bitsets der Länge $|Var|$:
+
+\begin{definition}[Variablenkombination]
+	Wir nennen $k$ eine Variablenkombination, wenn es die Form $k = (id, neighbours)$ hat mit $id, neighbours : \mbox{Var} \to \{0,1\}$ und $id \cap neighbours = \emptyset$. Wir nennen $|id|$ die Größe der Variablenkombination.
+\end{definition}
+
+Eine Variablenkombination dient dazu sowohl ursprüngliche Variablen als auch durch Zusammenführen von Variablen entstehende neue Variablen darzustellen. $id$ und $neighbours$ stellen wir bei der Implementierung der Effizienz wegen als bitsets dar.
+Jeder ursprünglichen Variablen $x \in Var$ ordnen wir die Variablenkombination $k_x \coloneqq (\{x\}, \{y \in Var \mid \{x,y\} \in F\})$ zu. Dabei beschreibt $id$, welche Variablen in der Kombination zusammengeführt worden sind und $neighbours$ beschreibt alle inzidenten anderen Variablen im Graph H, also genau alldiejenigen Variablen, mit welchen die Kombination nicht erweitert werden darf.
+
+\begin{definition}[zusammenführbar]
+	Wir nennen zwei Variablenkombinationen $k, l$ zusammenführbar, in Symbolen $k \downarrow l$, wenn $k_0 \cap l_1 \land l_0 \cap k_1$. Mit $k \cup l$ bezeichnen wir in diesem Fall die aus $k$ und $l$ nach Zusammenführen entstandene Variablenkombination  $k \cup l \coloneqq (k_0 \cup l_0, k_1 \cup l_1)$
+\end{definition}
+
+Die Definition zur Zusammenführbarkeit erlaubt die Zusammenführung offensichtlich genau in dem Fall, wenn ein keine zwei Variablen $x \in k_0$ und $y \in l_0$ existieren, welche eine Kante in $H$ verbindet.
+
+Wir gehen nun algorithmisch wiefolgt vor:
+Sei $K_1$ die Menge aller Variablenkombinationen der Größe 1, die sich unmittelbar aus $H$ ergeben: $K_1 \coloneqq \{k_x \mid x\in \mbox{Var} \}$.
+Wir berechnen nun nacheinander $K_2, K_3, K_4, \dots $ durch Zusammenführen bereits bekannter Variablenkombinationen: Haben wir zuletzt $K_i$ berechnet, so berechnen wir $K_{i+1}$ wiefolgt:
+
+\begin{lstlisting}[escapeinside={(*}{*)}]
+(*$K_{i+1} := \emptyset$*)
+for(b in (*$K_1$*)):
+   for (k in (*$K_i$*)):
+      if ((*$b \downarrow l$*) and (*$b_0 \cap l_0 = \emptyset$*)):
+         (*$K_{i+1} := K_{i+1} \cup (b \cup l)$*)
+\end{lstlisting}
+
+Nach endlich vielen Schritten wird ein $K_i = \emptyset$ erreicht, sobald sich aus den Variablenkombinationen $K_{i-1}$ keine größeren mehr ableiten lassen. Alle Elemente von $K_{i-1}$ sind dann maximal:
+
+\begin{definition}[maximale Variablenkombination]
+	Eine Variablenkombination $k$ nennen wir maximal, wenn es keine Variablenkombination $l\in K_1$ gibt, sodass $k, l$ zusammenführbar sind.
+\end{definition}
+
+Es genügt im nun folgenden Schritt für jedes $i$ alle maximalen Variablenkombinationen aus $K_i$ zu betrachten. Aus diesen bilden wir Abdeckungen aller Variablen unter Verwendung von so wenig wie möglich Variablenkombinationen.
+
+
+
+
+\subsection{Analyseergebnisse}
+
+Diagramme zur Verteilung 
+
+
+Heuristiken einzeichnen:
+
+Welsh-Powell
+
+Eigener Vorschlag
+
+Max-local-merge
+
+
+\subsection{Offene Fragestellungen}
+
+
+
+\pagebreak
+
+
+
+
+
+
+
+
+
 
 \newcommand{\probspace}{diskreter Wahr\-schein\-lich\-keits\-raum}
 \newcommand{\probspacen}{diskreten Wahr\-schein\-lich\-keits\-raum}
