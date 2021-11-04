@@ -40,7 +40,7 @@ stages:
          displayName: "Init Git Submodules"
          condition: succeeded()
    
-       - script: source ./texlive/texlive_install.sh 
+       - script: source ./texlive/texlive_install.sh && echo $PATH
          displayName: "Install dependencies"
          condition: succeeded()
        - script: echo $PATH && export PATH=/abc/def/bin:$PATH
