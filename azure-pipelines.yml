@@ -39,42 +39,49 @@ stages:
        - script: git submodule update --init --recursive && echo $PATH
          displayName: "Init Git Submodules"
          condition: succeeded()
-   
-       - script: source ./texlive/texlive_install.sh && export PATH
-         displayName: "Install dependencies"
-         condition: succeeded()
-       - script: echo $PATH && export PATH=/abc/def/bin:$PATH
-         displayName: "check PATH"
-         condition: succeeded()
-       - script: cat /etc/environment
-         displayName: "check PATH"
-         condition: succeeded()
        - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
-         displayName: "install biber"
+         displayName: "Install biber"
          condition: succeeded()
-         
-         
        - script: echo 'Check biber version...' && biber --version
-         displayName: "Biber"
+         displayName: "Check biber version"
          condition: succeeded()
+   
+       - script: |
+       source ./texlive/texlive_install.sh && echo $PATH
+       cd src
+       texliveonfly script.tex || true
+       pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+       biber script
+       pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+       pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
+         displayName: "Install texlive and build"
+         condition: succeeded()
+#       - script: echo $PATH && export PATH=/abc/def/bin:$PATH
+#         displayName: "check PATH"
+#         condition: succeeded()
+#       - script: cat /etc/environment
+#         displayName: "check PATH"
+#         condition: succeeded()
+         
+         
 
 
-       - script: cd src && texliveonfly script.tex || true
-         displayName: "Texlive On Fly"
-         condition: succeeded()
-       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-         displayName: "first compile as preparation fro biber"
-         condition: succeeded()
-       - script: cd src && biber script
-         displayName: "Run Biber"
-         condition: succeeded()
-       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-         displayName: "Rerun compile for broken references"
-         condition: succeeded()
-
-       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
-         displayName: "Rerun compile and save log."
-         condition: succeeded()
+#       - script: cd src && texliveonfly script.tex || true
+#         displayName: "Texlive On Fly"
+#         condition: succeeded()
+#       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+#         displayName: "first compile as preparation fro biber"
+#         condition: succeeded()
+#       - script: cd src && biber script
+#         displayName: "Run Biber"
+#         condition: succeeded()
+#       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+#         displayName: "Rerun compile for broken references"
+#         condition: succeeded()
+#
+#       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
+#         displayName: "Rerun compile and save log."
+#         condition: succeeded()
 
 
        - script: cd src && cat custom_log.log
