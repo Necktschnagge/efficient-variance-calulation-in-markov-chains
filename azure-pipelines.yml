@@ -47,13 +47,13 @@ stages:
          condition: succeeded()
    
        - script: |
-       source ./texlive/texlive_install.sh && echo $PATH
-       cd src
-       texliveonfly script.tex || true
-       pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-       biber script
-       pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-       pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
+            source ./texlive/texlive_install.sh && echo $PATH
+            cd src
+            texliveonfly script.tex || true
+            pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+            biber script
+            pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+            pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
          displayName: "Install texlive and build"
          condition: succeeded()
 #       - script: echo $PATH && export PATH=/abc/def/bin:$PATH
