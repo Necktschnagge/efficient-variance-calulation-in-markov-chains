@@ -7,20 +7,20 @@
 # required
 echo 0
 # See if there is a cached version of TL available
-export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
-if ! command -v texlua > /dev/null; then
+# export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
+#if ! command -v texlua > /dev/null; then
   # Obtain TeX Live
   echo download
-  wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+  wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
   tar -xzf install-tl-unx.tar.gz
-  cd install-tl-20*
+  cd install-tl-*
 
   echo install
   # Install a minimal system
-  ./install-tl --profile=../texlive/texlive.profile
-
+  ./install-tl -gui text #--profile=../texlive/texlive.profile
+  export PATH=/usr/local/texlive/2021/bin/x86_64-linux:$PATH
   cd ..
-fi
+#fi
 
 # Just including texlua so the cache check above works
 echo init-usertree
