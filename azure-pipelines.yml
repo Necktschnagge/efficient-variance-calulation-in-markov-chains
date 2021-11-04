@@ -46,6 +46,9 @@ stages:
        - script: echo $PATH
          displayName: "check PATH"
          condition: succeeded()
+       - script: cat /etc/environment
+         displayName: "check PATH"
+         condition: succeeded()
        - script: sudo apt-get update && sudo apt-get install biber gnuplot -y
          displayName: "install biber"
          condition: succeeded()
