@@ -64,9 +64,9 @@ stages:
 #         displayName: "check PATH"
 #         condition: succeeded()
 #            cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
- #           ../script/check_empty.sh
-  #          cat custom_errors.log
-   #         mv script.pdf $TRAVIS_BUILD_DIR/build/
+#           ../script/check_empty.sh
+#          cat custom_errors.log
+#         mv script.pdf $TRAVIS_BUILD_DIR/build/
 
          
          
