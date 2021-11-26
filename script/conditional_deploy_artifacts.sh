@@ -28,7 +28,7 @@ git_access_token=${2}
 echo
 echo "Check if this is a pull request:"
 if [ "${pull_id}" -eq "${pull_id}" ] 2>/dev/null; then #always use single "[]" here so that "-eq" requires integers
-	echo -e "\tThis is a pull request build. Script will continue to create dependency diagram."
+	echo -e "\tThis is a pull request build. Script will continue to upload script PDF."
 	echo -e "\tThis build is for pull request #${pull_id}."
 	echo -e "\tAlso see: ${git_repo_url}/pull/${pull_id}"
 else
