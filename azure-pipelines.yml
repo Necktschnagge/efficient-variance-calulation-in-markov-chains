@@ -56,16 +56,18 @@ stages:
        - script: cat src/custom_log.log
          displayName: "Show final build log"
          condition: succeeded()
-#       - script: echo 'Check biber version...' && biber --version
-#         displayName: "Check biber version"
-#         condition: succeeded()
-   
-#       - script: cat /etc/environment
-#         displayName: "check PATH"
-#         condition: succeeded()
-#            cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
-#           ../script/check_empty.sh
-#          cat custom_errors.log
+       - script: cd src && cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
+         displayName: "Search errors in log only"
+         condition: succeeded()
+       - script: cat src/custom_errors.log
+         displayName: "Show only errors"
+         condition: succeeded()
+       - script: cd src && ../script/check_empty.sh
+         displayName: "Check that error list is empty"
+         condition: succeeded()         
+       - script: echo 'Check biber version...' && biber --version
+         displayName: "Check biber version"
+         condition: succeeded()
 #         mv script.pdf $TRAVIS_BUILD_DIR/build/
 #       - script: cd src && texliveonfly script.tex || true
 #         displayName: "Texlive On Fly"
@@ -84,14 +86,7 @@ stages:
 #         displayName: "Rerun compile and save log."
 #         condition: succeeded()
 
-
-       - script: cd src && cat custom_log.log
-         displayName: "Show log"
-         condition: succeeded()
-       - script: cd src && cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
-         displayName: "Search errors in log only"
-         condition: succeeded()
-         
+       
          
 #  - $TRAVIS_BUILD_DIR/script/check_empty.sh
 # - cat custom_errors.log
