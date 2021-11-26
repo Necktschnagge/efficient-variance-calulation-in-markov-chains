@@ -42,10 +42,6 @@ stages:
        - script: sudo apt-get update #&& sudo apt-get install biber gnuplot -y
          displayName: "Install biber"
          condition: succeeded()
-#       - script: echo 'Check biber version...' && biber --version
-#         displayName: "Check biber version"
-#         condition: succeeded()
-   
        - script: |
             source ./texlive/texlive_install.sh && echo $PATH
             sudo apt-get install biber gnuplot -y
@@ -60,6 +56,10 @@ stages:
        - script: cat src/custom_log.log
          displayName: "Show final build log
          condition: succeeded()
+#       - script: echo 'Check biber version...' && biber --version
+#         displayName: "Check biber version"
+#         condition: succeeded()
+   
 #       - script: cat /etc/environment
 #         displayName: "check PATH"
 #         condition: succeeded()
