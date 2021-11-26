@@ -67,11 +67,6 @@ stages:
 #           ../script/check_empty.sh
 #          cat custom_errors.log
 #         mv script.pdf $TRAVIS_BUILD_DIR/build/
-
-         
-         
-
-
 #       - script: cd src && texliveonfly script.tex || true
 #         displayName: "Texlive On Fly"
 #         condition: succeeded()
