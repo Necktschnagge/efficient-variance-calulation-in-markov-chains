@@ -628,8 +628,9 @@ Wie sich unschwer erkennen lÃ¤sst, sind alle Heuristiken bezogen auf die ausgewÃ
 	\label{nodes6}
 	\begin{center}
 	\scalebox{2}{
-	\hspace{-14ex}
-	\begin{tikzpicture}[scale=0.5]
+	%\hspace{-14ex}
+	\makebox[0pt]{
+	\begin{tikzpicture}[scale=0.45]
 	\begin{axis}[
 	xlabel = {x},
 	ylabel = {Anzahl der Modelle},
@@ -665,7 +666,7 @@ Wie sich unschwer erkennen lÃ¤sst, sind alle Heuristiken bezogen auf die ausgewÃ
 	
 	\end{axis}
 	\end{tikzpicture}	%\caption{Verteilung der states von Modell 6}	%\label{}
-	\begin{tikzpicture}[scale=0.5]
+	\begin{tikzpicture}[scale=0.45]
 	\begin{axis}[
 	xlabel = {x},
 	ylabel = {Anzahl der Modelle},
@@ -701,23 +702,26 @@ Wie sich unschwer erkennen lÃ¤sst, sind alle Heuristiken bezogen auf die ausgewÃ
 	
 	\end{axis}
 	\end{tikzpicture}
+}
 
 }
 \end{center}
 
 \begin{center}
+\makebox[0pt]{
 	\begin{tabular}{|l|cc|cc|r|}
 		\hline
 		\textbf{} & \textbf{\#nodes} & \textbf{\% reduction} & \textbf{\#states} & \textbf{\% reduction} & \textbf{Zeit} \\
 		\hline
-		originales Modell & 2714 & 3045 & 12s \\
+		originales Modell & XXX & { \color{gray} 0} & XXX & { \color{gray} 0} & TTT \\
 		\hline
-		Maximum Merge First & 2037 & 7107 & 7s \\
-		Remove Nodes & 2038 & 7315 & 10s \\
-		Welsh-Powell & 2056 & 7664 & 8s \\
-		Minimum (red. Modelle) & 1772 & 7038 &  \\
+		Maximum Merge First & XXX & YY & XXX & YY & TTT \\
+		Remove Nodes & XXX & YY & XXX & YY & TTT \\
+		Welsh-Powell & XXX & YY & XXX & YY & TTT \\
+		Minimum (red. Modelle) & XXX & YY & XXX & YY & \\
 		\hline
 	\end{tabular}
+}
 \end{center}
 \end{figure}
 	
@@ -999,7 +1003,8 @@ Wie sich unschwer erkennen lÃ¤sst, sind alle Heuristiken bezogen auf die ausgewÃ
 \end{figure}
 
 
-
+\begin{comment}
+	
 \begin{figure}
 	\caption{Verteilung der nodes und states von Modell 12}
 	\begin{center}
@@ -1084,104 +1089,106 @@ Wie sich unschwer erkennen lÃ¤sst, sind alle Heuristiken bezogen auf die ausgewÃ
 	\end{tabular}
 \end{center}
 \end{figure}
+\end{comment}
 
 
 \begin{figure}
 	\caption{Verteilung der nodes und states von Modell 18}
-	%\label{}
+	\label{last-diagram}
 	\begin{center}
-	\scalebox{2}{
-		\hspace{-14ex}	
-	\begin{tikzpicture}[scale=0.5]
-	\begin{axis}[
-	xlabel = {x},
-	ylabel = {Anzahl der Modelle},
-	xmin = 1635,
-	xmax = 1887,
-	ymin = 0,
-	ymax = 72,
-	legend pos = north west,
-	ymajorgrids = true,
-	grid style = dashed,
-	]
-	\path[name path=axis] (axis cs:0,0) -- (axis cs:1,0);
-	
-	\addplot[color = red!50, fill=red, fill opacity=0.5]
-	coordinates{
-		(1635, 0)(1655.99, 0)(1656, 2)(1676.99, 2)(1677, 4)(1682.99, 4)(1683, 6)(1696.99, 6)(1697, 8)(1729.99, 8)(1730, 10)(1734.99, 10)(1735, 12)(1739.99, 12)(1740, 14)(1743.99, 14)(1744, 16)(1748.99, 16)(1749, 18)(1752.99, 18)(1753, 20)(1763.99, 20)(1764, 22)(1769.99, 22)(1770, 24)(1786.99, 24)(1787, 26)(1789.99, 26)(1790, 28)(1793.99, 28)(1794, 30)(1807.99, 30)(1808, 32)(1834.99, 32)(1835, 34)(1865.99, 34)(1866, 36)(1887, 36)(1887, 0)
-	};
-
-	\node[rotate=90] (source) at (axis cs:1677,20){\mmfh};
-	\node (destination) at (axis cs:1677,4){};
-	\draw[->](source)--(destination);
-	
-	\node[rotate=90] (source2) at (axis cs:1770,40){\wph};
-	\node (destination2) at (axis cs:1770,24){};
-	\draw[->](source2)--(destination2);	
-	
-	\node[rotate=90] (source3) at (axis cs:1683,40){\rnh};
-	\node (destination3) at (axis cs:1683,6){};
-	\draw[->](source3)--(destination3);
-	
-	
-	\addlegendentry{Modelle mit $\leq x$ nodes}
-	
-	\end{axis}
-	\end{tikzpicture}
-	\begin{tikzpicture}[scale=0.5]
-	\begin{axis}[
-	xlabel = {x},
-	ylabel = {Anzahl der Modelle},
-	xmin = 1646.3,
-	xmax = 1846.7,
-	ymin = 0,
-	ymax = 72,
-	legend pos = north west,
-	ymajorgrids = true,
-	grid style = dashed,
-	]
-	\path[name path=axis] (axis cs:0,0) -- (axis cs:1,0);
-	
-	\addplot[color = red!50, fill=red, fill opacity=0.5]
-	coordinates{
-		(1646.3, 0)(1662.99, 0)(1663, 2)(1667.99, 2)(1668, 4)(1669.99, 4)(1670, 6)(1680.99, 6)(1681, 8)(1686.99, 8)(1687, 10)(1691.99, 10)(1692, 12)(1693.99, 12)(1694, 14)(1711.99, 14)(1712, 16)(1718.99, 16)(1719, 18)(1720.99, 18)(1721, 20)(1731.99, 20)(1732, 22)(1736.99, 22)(1737, 26)(1754.99, 26)(1755, 28)(1774.99, 28)(1775, 30)(1784.99, 30)(1785, 32)(1819.99, 32)(1820, 34)(1829.99, 34)(1830, 36)(1846.7, 36)(1846.7, 0)
-	};
-	
-	\node[rotate=90] (source) at (axis cs:1681,21){\mmfh};
-	\node (destination) at (axis cs:1681,8){};
-	\draw[->](source)--(destination);
-	
-	\node[rotate=90] (source2) at (axis cs:1687,40){\wph};
-	\node (destination2) at (axis cs:1687,10){};
-	\draw[->](source2)--(destination2);	
-	
-	\node[rotate=90] (source3) at (axis cs:1732,35){\rnh};
-	\node (destination3) at (axis cs:1732,22){};
-	\draw[->](source3)--(destination3);
-	
-	
-	\addlegendentry{Modelle mit $\leq x$ states}
-	
-	\end{axis}
-	\end{tikzpicture}
-	
-}
-\end{center}
-\begin{center}
-	\begin{tabular}{|l|ccr|}
-		\hline
-		\textbf{} & \textbf{\#nodes} & \textbf{\#states} & \textbf{Zeit} \\
-		\hline
-		originales Modell & 2215 & 1010 & 5s \\
-		\hline
-		Maximum Merge First & 1677 & 1681 & 13s  \\
-		Remove Nodes & 1683 & 1732 &  9s \\
-		Welsh-Powell & 1770 & 1687 & 9s \\
-		Minimum (red. Modelle) & 1656 & 1663 &  \\
-		\hline
-	\end{tabular}
-\end{center}
+		\scalebox{2}{
+			\makebox[0pt]{
+				\begin{tikzpicture}[scale=0.45]
+				\begin{axis}[
+				xlabel = {x},
+				ylabel = {Anzahl der Modelle},
+				xmin = 1591.9,
+				xmax = 1773.1,
+				ymin = 0,
+				ymax = 72,
+				legend pos = north west,
+				ymajorgrids = true,
+				grid style = dashed,
+				]
+				\path[name path=axis] (axis cs:0,0) -- (axis cs:1,0);
+				
+				\addplot[color = red!50, fill=red, fill opacity=0.5]
+				coordinates{
+					(1591.9, 0)(1606.99, 0)(1607, 2)(1621.99, 2)(1622, 4)(1627.99, 4)(1628, 6)(1628.99, 6)(1629, 8)(1640.99, 8)(1641, 10)(1643.99, 10)(1644, 12)(1645.99, 12)(1646, 14)(1656.99, 14)(1657, 16)(1663.99, 16)(1664, 18)(1683.99, 18)(1684, 20)(1687.99, 20)(1688, 22)(1698.99, 22)(1699, 24)(1705.99, 24)(1706, 26)(1712.99, 26)(1713, 30)(1732.99, 30)(1733, 32)(1748.99, 32)(1749, 34)(1757.99, 34)(1758, 36)(1773.1, 36)(1773.1, 0)
+				};
+				
+				\node[rotate = 90](source) at(axis cs:1644,45) { \mmfh };
+				\node(destination) at(axis cs:1644,12) {};
+				\draw[->](source)--(destination);
+				
+				\node[rotate = 90](source2) at(axis cs:1641,28) { \wph };
+				\node(destination2) at(axis cs:1641,10) {};
+				\draw[->](source2)--(destination2);
+				
+				\node[rotate = 90](source3) at(axis cs:1684,38) { \rnh };
+				\node(destination3) at(axis cs:1684,20) {};
+				\draw[->](source3)--(destination3);
+				
+				\addlegendentry{Modelle mit $\leq x$ nodes}
+				
+				\end{axis}
+				\end{tikzpicture}
+				\begin{tikzpicture}[scale=0.45]
+				\begin{axis}[
+				xlabel = {x},
+				ylabel = {Anzahl der Modelle},
+				xmin = 259.9,
+				xmax = 453.1,
+				ymin = 0,
+				ymax = 72,
+				legend pos = north west,
+				ymajorgrids = true,
+				grid style = dashed,
+				]
+				\path[name path=axis] (axis cs:0,0) -- (axis cs:1,0);
+				
+				\addplot[color = red!50, fill=red, fill opacity=0.5]
+				coordinates{
+					(259.9, 0)(275.99, 0)(276, 2)(281.99, 2)(282, 6)(294.99, 6)(295, 8)(297.99, 8)(298, 12)(299.99, 12)(300, 14)(302.99, 14)(303, 16)(305.99, 16)(306, 18)(313.99, 18)(314, 20)(320.99, 20)(321, 22)(331.99, 22)(332, 24)(358.99, 24)(359, 26)(366.99, 26)(367, 28)(395.99, 28)(396, 30)(404.99, 30)(405, 32)(433.99, 32)(434, 34)(436.99, 34)(437, 36)(453.1, 36)(453.1, 0)
+				};
+				
+				\node[rotate = 90](source) at(axis cs:300,32) { \mmfh };
+				\node(destination) at(axis cs:300,14) {};
+				\draw[->](source)--(destination);
+				
+				\node[rotate = 90](source2) at(axis cs:282,44) { \wph };
+				\node(destination2) at(axis cs:282,6) {};
+				\draw[->](source2)--(destination2);
+				
+				\node[rotate = 90](source3) at(axis cs:276,20) { \rnh };
+				\node(destination3) at(axis cs:276,2) {};
+				\draw[->](source3)--(destination3);
+				
+				\addlegendentry{Modelle mit $\leq x$ states}
+				
+				\end{axis}
+				\end{tikzpicture}
+			}
+		}
+	\end{center}
+	\begin{center}
+		\makebox[0pt]{
+			\begin{tabular}{|l|cc|cc|r|}
+				\hline
+				\textbf{} & \textbf{\#nodes} & \textbf{\% reduction} & \textbf{\#states} & \textbf{\% reduction} & \textbf{Zeit} \\
+				\hline
+				originales Modell & 2215 & { \color{gray} 0\%} & 1010 & { \color{gray} 0\%} & 5s \\
+				\hline
+				Maximum Merge First & 1644 & 26\% & 300 & 70\% & 3s \\
+				Remove Nodes & 1684 & 24\% & 276 & 73\% & 2s \\
+				Welsh-Powell & 1641 & 26\% & 282 & 72\% & 3s \\
+				Minimum (red. Modelle) & 1607 & 27\% & 276 & 73\% & \\
+				\hline
+			\end{tabular}
+		}
+	\end{center}
 \end{figure}
+
 
 \subsection{Offene Fragestellungen}
 
