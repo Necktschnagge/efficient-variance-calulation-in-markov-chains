@@ -68,7 +68,7 @@ stages:
        - script: echo 'Check biber version...' && biber --version
          displayName: "Check biber version"
          condition: succeeded()
-       - script: ./script/ci/create-deploy-include-dependency-graph.sh "$(USER_NAME)" "$(PERSONAL_ACCESS_TOKEN)" "$(System.PullRequest.PullRequestNumber)"
+       - script: ./script/conditional_deploy_artifacts.sh "$(USER_NAME)" "$(PERSONAL_ACCESS_TOKEN)" "$(System.PullRequest.PullRequestNumber)"
          displayName: "Deploy PDF artifact"
          condition: succeeded()
 # - mv script.pdf $TRAVIS_BUILD_DIR/build/
