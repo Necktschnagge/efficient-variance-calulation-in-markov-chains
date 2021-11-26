@@ -55,14 +55,19 @@ stages:
             biber script
             pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
             pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
-         displayName: "Install texlive and build"
+         displayName: "Install texlive and build PDF"
          condition: succeeded()
-#       - script: echo $PATH && export PATH=/abc/def/bin:$PATH
-#         displayName: "check PATH"
-#         condition: succeeded()
+       - script: cat src/custom_log.log
+         displayName: "Show final build log
+         condition: succeeded()
 #       - script: cat /etc/environment
 #         displayName: "check PATH"
 #         condition: succeeded()
+#            cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
+ #           ../script/check_empty.sh
+  #          cat custom_errors.log
+   #         mv script.pdf $TRAVIS_BUILD_DIR/build/
+
          
          
 
