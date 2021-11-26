@@ -68,28 +68,7 @@ stages:
        - script: echo 'Check biber version...' && biber --version
          displayName: "Check biber version"
          condition: succeeded()
-#         mv script.pdf $TRAVIS_BUILD_DIR/build/
-#       - script: cd src && texliveonfly script.tex || true
-#         displayName: "Texlive On Fly"
-#         condition: succeeded()
-#       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-#         displayName: "first compile as preparation fro biber"
-#         condition: succeeded()
-#       - script: cd src && biber script
-#         displayName: "Run Biber"
-#         condition: succeeded()
-#       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-#         displayName: "Rerun compile for broken references"
-#         condition: succeeded()
-#
-#       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
-#         displayName: "Rerun compile and save log."
-#         condition: succeeded()
 
-       
-         
-#  - $TRAVIS_BUILD_DIR/script/check_empty.sh
-# - cat custom_errors.log
 # - mv script.pdf $TRAVIS_BUILD_DIR/build/
   
   
