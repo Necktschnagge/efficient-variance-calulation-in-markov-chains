@@ -54,7 +54,7 @@ stages:
          displayName: "Install texlive and build PDF"
          condition: succeeded()
        - script: cat src/custom_log.log
-         displayName: "Show final build log
+         displayName: "Show final build log"
          condition: succeeded()
 #       - script: echo 'Check biber version...' && biber --version
 #         displayName: "Check biber version"
