@@ -36,57 +36,41 @@ stages:
 #         displayName: "Linux: Install Boost"
 #         condition: and(succeeded(), eq( variables['Agent.OS'], 'Linux' ))
        #real Tasks:
-       - script: git submodule update --init --recursive
+       - script: git submodule update --init --recursive && echo $PATH
          displayName: "Init Git Submodules"
          condition: succeeded()
-   
-#       - script: sudo apt-get install texlive && sudo apt-get update && sudo apt-get install biber gnuplot -y
-#         displayName: "install biber"
-#         condition: succeeded()
-#       - script: tlmgr init-usertree
-#         displayName: "tlmgr"
-#         condition: succeeded()
-#       - script: ./texlive/texlive_install.sh 
-#         displayName: "Install dependencies via script"
-#         condition: succeeded()
-#       - script: sudo apt-get install texlive-lang-german
-#         displayName: "Install via apt-get"
-#         condition: succeeded()
-         
-         
-#       - script: echo 'Check biber version...' && biber --version
-#         displayName: "Biber"
-#         condition: succeeded()
-
-
-       - script: cd src && texliveonfly script.tex || true
-         displayName: "Texlive On Fly"
+       - script: sudo apt-get update #&& sudo apt-get install biber gnuplot -y
+         displayName: "Install biber"
          condition: succeeded()
-       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-         displayName: "first compile as preparation fro biber"
+       - script: |
+            source ./texlive/texlive_install.sh && echo $PATH
+            sudo apt-get install biber gnuplot -y
+            cd src
+            texliveonfly script.tex || true
+            pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+            biber script
+            pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
+            pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
+         displayName: "Install texlive and build PDF"
          condition: succeeded()
-       - script: cd src && biber script
-         displayName: "Run Biber"
-         condition: succeeded()
-       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex
-         displayName: "Rerun compile for broken references"
-         condition: succeeded()
-
-       - script: cd src && pdflatex -shell-escape -synctex=1 -interaction=nonstopmode script.tex > custom_log.log
-         displayName: "Rerun compile and save log."
-         condition: succeeded()
-
-
-       - script: cd src && cat custom_log.log
-         displayName: "Show log"
+       - script: cat src/custom_log.log
+         displayName: "Show final build log"
          condition: succeeded()
        - script: cd src && cat custom_log.log | grep -E 'at\s*line(s|)\s*[0-9]+' > custom_errors.log || true
          displayName: "Search errors in log only"
          condition: succeeded()
-         
-         
-#  - $TRAVIS_BUILD_DIR/script/check_empty.sh
-# - cat custom_errors.log
+       - script: cat src/custom_errors.log
+         displayName: "Show only errors"
+         condition: succeeded()
+       - script: cd src && ../script/check_empty.sh
+         displayName: "Check that error list is empty"
+         condition: succeeded()         
+       - script: echo 'Check biber version...' && biber --version
+         displayName: "Check biber version"
+         condition: succeeded()
+       - script: ./script/conditional_deploy_artifacts.sh "$(USER_NAME)" "$(PERSONAL_ACCESS_TOKEN)" "$(System.PullRequest.PullRequestNumber)"
+         displayName: "Deploy PDF artifact"
+         condition: succeeded()
 # - mv script.pdf $TRAVIS_BUILD_DIR/build/
   
   
