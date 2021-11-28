@@ -556,7 +556,7 @@ Der Welsh-Powell Algorithmus basiert kurz gefasst darauf, die Knoten in einer Li
 Als erste Alternative soll hier ein Algorithmus basierend auf Chaitin’s graph coloring algorithm \cite{chaitin} gegenübergestellt werden. Letzterer wird bei Compilern verwendet, geht davon aus, nur eine fixe Zahl von Farben zur Verfügung zu haben und setzt dann sogenannten Spill Code ein, wenn die Farben nicht ausreichen. Die fixe Zahl ergibt sich aus der fixen Zahl von verfügbaren Registern, welche ein Compiler mit Variablen belegen kann. Schließlich entsprechen in diesem Anwendungsfall die Farben den Registern, deren Zuordnung zu Variablen sich während der Laufzeit ändern lässt, wenn dafür Zwischenergebnisse in den Arbeitsspeicher geschrieben werden, um Platz zu schaffen, andere Variablen in Registern vorhalten zu können.
 
 
-Trotz des etwas andersgearteten Anwendungsfalls lässt sich die folgende Idee aus dem Algorithmus auch anwenden, wenn die Zahl der Farben nicht vorab festgelegt ist: Stellen wir uns vor, wir betrachten einen Graphen, den wir mit $k$ Farben färben wollen und wir finden einen Knoten $v$ mit weniger als $k$ Nachbarn. Wenn wir $v$ entfernen und den restlichen Graphen erfolgreich färben können, ist es am Ende leicht für $v$ eine von den $k$ Farben zu wählen, die durch keinen der Nachbarn von $v$ belegt ist. Ist der restliche Graph ohne $v$ also $k$-färbbar, so auch der ursprüngliche Graph. Wir nutzen nun die Idee folgendermaßen: Wir enfernen solange Knoten mit minimaler Zahl inzidenter Kanten und betrachten den verbleibenden induzierten Subgraphen, bis alle Knoten entfernt sind. Dann iterieren wir in umgekehrter Reihenfolge über die Knoten und weisen jeweils die kleinste Farbe zu, die noch nicht von Nachbarknoten verwendet wird. Wir wollen das Verfahren \textit{Remove Nodes} nennen und kürzen es in den später folgenden Diagrammen mit \textit{RemNod} ab:
+Trotz des etwas andersgearteten Anwendungsfalls lässt sich die Idee des Algorithmus auch anwenden, wenn die Zahl der Farben nicht vorab festgelegt ist: Stellen wir uns vor, wir betrachten einen Graphen, den wir mit $k$ Farben färben wollen und wir finden einen Knoten $v$ mit weniger als $k$ Nachbarn. Wenn wir $v$ entfernen und den restlichen Graphen erfolgreich färben können, ist es am Ende leicht für $v$ eine von den $k$ Farben zu wählen, die durch keinen der Nachbarn von $v$ belegt ist. Ist der restliche Graph ohne $v$ also $k$-färbbar, so auch der ursprüngliche Graph. Wir nutzen nun die Idee folgendermaßen: Wir enfernen solange Knoten mit minimaler Zahl inzidenter Kanten und betrachten den verbleibenden induzierten Subgraphen, bis alle Knoten entfernt sind. Dann iterieren wir in umgekehrter Reihenfolge über die Knoten und weisen jeweils die kleinste Farbe zu, die noch nicht von Nachbarknoten verwendet wird. Wir wollen das Verfahren \textit{Remove Nodes} nennen mit der Abkürzung \textit{RemNod}:
 {
 	\small
 	\begin{lstlisting}[escapeinside={(*}{*)}]
@@ -604,20 +604,22 @@ Für diese Methode, die als zusätzlicher Vergleich dienen soll, lassen wir offe
 
 \subsection{Ergebnisse aus Vergleichen}
 
-Wir betrachten nun die Abbildungen \ref{first-diagram} bis \ref{last-diagram}. Dargestellt sind die Ergebnisse für sechs verschiedene ausgewählte Modelle. Die Nummerierung der Modelle entspricht dabei den Dateinamen im zugehörigen git repository und sollen daher hier nicht irritieren. Für jedes Modell gibt es zwei Diagramme, im ersten ist jeweils die Verteilung der Anzahl der nodes, im zweiten die Verteilung der Anzahl der states zu sehen. Die Art und Weise der Darstellung ist ansonsten in allen Diagrammen gleich.
+Wir betrachten nun die Abbildungen \ref{first-diagram} bis \ref{last-diagram}. Dargestellt sind zunächst die Ergebnisse für drei verschiedene ausgewählte randomisiert generierte Modelle. Die Nummerierung der Modelle entspricht dabei den Dateinamen im zugehörigen git repository und sollen daher hier nicht irritieren. Für jedes Modell gibt es zwei Diagramme, im ersten ist jeweils die Verteilung der Anzahl der nodes, im zweiten die Verteilung der Anzahl der states zu sehen. Die Art und Weise der Darstellung ist ansonsten in allen Diagrammen gleich. Ergänzend zeigt eine Tabelle jeweils konkrete Werte.
 
-Werfen wir beispielhaft zunächst einen Blick auf Abbildung \ref{nodes6}. Auf der Abzissenachse ist die Zahl der nodes abgetragen, die Ordinate wiederum misst die Anzahl von Modellen. Letztere bezieht sich nun auf alle Modelle, die durch optimale Graphfärbungen aus dem originalen Modell 6 entstanden sind. Die Zahl der nodes zu einem Modell wurde bestimmt, indem PRISM auf dem jeweiligen Modell aufgerufen wurde und der entsprechende Wert aus dem Log abgelesen wurde. Dabei wurde mit den Argumentden beim Aufruf von PRSIM \texttt{-reorder -reorderoptions converge -mtbdd} das Reordering der MTBDD engine genutzt. Die Zahl der nodes bezieht sich immer auf die Transitionsmatrix nach dem Reordering.
-Die dargestellte Funktion ordnet jeder Zahl von nodes $x$ die Anzahl all jener Modelle zu, welche zu einer Anzahl von höchstens $x$ nodes geführt haben. Somit beträgt der Funktionswert am linken Ende der Grafik null und am rechten Ende die Gesamtzahl der durch Live Range Analysis und Zusammenfassen von Variablen entstandenen Modelle. In jedem Diagramm sind mit drei Pfeilen die Ergebnisse der reduzierten Modelle markiert, die durch Anwendung der drei zuvor beschriebenen Heuristiken enstanden sind. Tatsächlich führten bei allen bisher untersuchten Modellen alle der Heuristiken tatsächlich zu einem reduzierten Modell mit kleinstmöglicher Zahl an Variablen, also zu einem Modell, was sich auch unter allen generierten befindet.
-Alle weiteren Diagramme sind zu Abbildung \ref{first-diagram} analog.
+Werfen wir beispielhaft zunächst einen Blick auf das linke Diagramm von Abbildung \ref{first-diagram}. Auf der Abzissenachse ist die Zahl der nodes abgetragen, die Ordinate wiederum misst die Anzahl von Modellen. Letztere bezieht sich nun auf alle Modelle, die durch optimale Graphfärbungen aus dem originalen Modell 6 entstanden sind. Die Zahl der nodes zu einem Modell wurde bestimmt, indem PRISM auf dem jeweiligen Modell aufgerufen wurde und der entsprechende Wert aus dem Log abgelesen wurde. Dabei wurde mit den Argumentden beim Aufruf von PRSIM \texttt{-reorder -reorderoptions converge -mtbdd} das Reordering der MTBDD engine genutzt. Die Zahl der (MTBDD) nodes bezieht sich immer auf die Transitionsmatrix nach dem Reordering.
+Die dargestellte Funktion ordnet jeder Zahl von nodes $x$ die Anzahl all jener Modelle zu, welche zu einer Anzahl von höchstens $x$ nodes geführt haben. Somit beträgt der Funktionswert am linken Ende der Grafik null und am rechten Ende die Gesamtzahl der durch Live Range Analysis und Zusammenfassen von Variablen entstandenen Modelle. In jedem Diagramm sind mit drei Pfeilen die Ergebnisse der reduzierten Modelle markiert, die durch Anwendung der drei zuvor beschriebenen Heuristiken enstanden sind. Tatsächlich führten bei allen bisher untersuchten Modellen, zu welchen wir die Gesamtheit aller optimalen Graphfärbungen bestimmt haben, alle der Heuristiken tatsächlich zu einem reduzierten Modell mit kleinstmöglicher Zahl an Variablen, also zu einem Modell, was sich auch unter allen generierten befindet.
+Insofern sind die Heuristiken nach bisherigen Beobachtungen sehr erfolgsversprechend.
+Alle weiteren Diagramme sind zum linken Diagramm aus Abbildung \ref{first-diagram} analog. Das rechte Diagramm zeigt jeweils die Zahl der states und ist von der Darstellung her identisch aufbereitet wie bei den nodes.
 
-Zu jeden zwei Diagrammen gibt es noch eine Tabelle mit den konkreten Werten für die drei Heuristiken. Gegenübergestellt sind die Werte für das originale Modell sowie die minimalen Werte bezogen auf alle reduzierten Modelle. Die Zeitangaben sind die Dauer der Ausführung von PRISM und sollen nur als grobe Richtwerte verstanden werden.
+Zu jeder Abbildung gehört eine Tabelle. Abbildung \ref{last-diagram} besteht nur aus einer Tabelle. Für dieses Modell wurden nicht alle optimalen Färbungen bestimmt und es konnten nur die Ergebnisse von zwei Heuristiken mit dem originalen Modell verglichen werden. Werfen wir auch hier beispielhaft einen Blick auf die Tabelle von Abbildung \ref{first-diagram}: Zusehen ist in der ersten Spalte die Zahl der Nodes abgelesen aus dem Log vom PRISM model checker für das originale Modell und für die drei Modelle, welche nach Anwendung der Heuristiken entstanden sind. Zusätzlich zeigt die letzte den minimalen Wert unter allen reduzierten Modellen. Der Prozentsatz daneben gibt an, um wieviel Prozent die Zahl der Nodes sich verringert hat im Vergleich zum originalen Modell. Die gleiche Angabe erfolgt dann analog für die Zahl der states, die Zahl der erreichbaren Zustände des Modells, wie von PRISM ausgegeben. Die Zeitangaben bilden die Dauer der Ausführung von PRISM ab und sollen nur als grobe Richtwerte verstanden werden. Es wurden dazu die Laufzeiten aus einem Continuous Integration System abgelesen.
+
 
 Zunächst fällt auf, dass sowohl bei der Zahl der nodes als auch der states deutlich erkennbar ist, dass nicht alle reduzierten Modelle eines Originalmodells etwa die gleiche Anzahl an nodes oder states besitzen.
-Es besteht tatsächlich die Möglichkeit dahingehend zu optimieren, dass man nach Modellen mit wenig states bzw. nodes sucht. Das reduzierte Modell zu Modell 6 mit den meisten nodes weist beispielsweise über $35\%$ mehr auf als das reduzierte Modell mit den wenigsten nodes.
-Die drei Heuristiken, von denen man sich erhofft, dass sie möglichst zu Modellen führen, mit geringer Zahl an nodes bzw. states, können in dieser Hinsicht alle nicht überzeugen.
-Maximum Merge First schnitt beispielsweise bei Modell 18 wie auch Modell 6 sowohl bei der Zahl der nodes als auch der Zahl der states am besten ab, teilweise nur knapp. Bei der Zahl der states zu Modell 11 jedoch enttäuschten sowohl Maximum Merge First als auch Welsh-Powell auf ganzer Linie und erreichten den höchstmöglichen Wert unter allen reduzierten Modellen. Remove Nodes erreichte dagegen bei den states zu Modell 11 eines der Modelle mit minimaler Zahl an states. Schauen wir nur für Modell 11 stattdessen die nodes an, so liegen plötzlich Maximum Merge First und Welsh-Powell vorn. Tatsächlich führten beide Heuristiken sogar zum selben reduzierten Modell.
+Es besteht tatsächlich die Möglichkeit dahingehend zu optimieren, dass man nach Modellen mit wenig states bzw. von PRISM benötigten nodes sucht. Das reduzierte Modell zu Modell 6 mit den meisten states weist beispielsweise über rund $2.8$ mal so viele states auf wie das reduzierte Modell mit den wenigsten states.
+Die drei Heuristiken, von denen man sich erhofft, dass sie möglichst zu Modellen mit geringer Zahl an nodes bzw. states führen, können nicht überzeugen, wenn es darum geht immer sehr kleine Modelle zu treffen:
+Maximum Merge First schnitt beispielsweise bei Modell 6 sowohl bei der Zahl der nodes als auch der Zahl der states am besten ab. Die Zahl der states trifft nahezu das Optimum. Bei der Zahl der states zu Modell 11 jedoch enttäuschten sowohl Maximum Merge First als auch Welsh-Powell auf ganzer Linie und erreichten den zweithöchsten Wert unter allen reduzierten Modellen. Remove Nodes erreichte dagegen bei den states zu Modell 11 eines der Modelle mit recht kleiner Zahl an states im Vergleich zu allen reduzierten Modellen. Schauen wir nur für Modell 11 stattdessen die nodes an, so liegen plötzlich Maximum Merge First und Welsh-Powell vorn. Gleichzeitig ist die erreichte Zahl der nodes in diesem Fall keineswegs herausragend, sondern ziemlich in der Nähe vom Median. Tatsächlich führten hier beide Heuristiken sogar zum selben reduzierten Modell.
 
-Wie sich unschwer erkennen lässt, sind alle Heuristiken bezogen auf die ausgewählten Beispielmodelle nur wenig brauchbar. Es scheint genauso gut zu sein, einfach irgendein Modell mit kleinster Zahl an Variablen zu nehmen. Es sei an dieser Stelle noch darauf hingewiesen, dass keine der 3 Heuristiken im Allgemeinen deterministisch zu einem eindeutigen Modell führt: Maximum Merge First führt zu einer nichtdeterministischen Auswahl für den Fall, dass einmal mindestens zwei maximale Mengen an Knoten existieren, die in derselben Farbe gefärbt werden können. Die beiden anderen Heuristiken basieren auf einer Reihenfolge von Knoten, die auch nicht eindeutig ist. Bei der Implementierung der Heuristiken wurde jeweils nur ein resultierendes Modell ermittelt.
+Wie sich unschwer erkennen lässt, sind alle Heuristiken bezogen auf die ausgewählten Beispielmodelle nur wenig brauchbar, um innerhalb aller Modelle mit minimalen Variablen möglichst gute zu finden. Auch erweist sich keine Heuristik als stets erfolgreicher als eine andere. Es scheint genauso gut zu sein, einfach irgendein Modell mit kleinster Zahl an Variablen zu nehmen. Von einer guten Reduktion sprechen wir in diesem Zusammenhang natürich immer dann, wenn die Zahl der states und der Nodes möglichst klein wird. Es sei an dieser Stelle noch darauf hingewiesen, dass keine der 3 Heuristiken im Allgemeinen deterministisch zu einem eindeutigen Modell führt: Maximum Merge First führt zu einer nichtdeterministischen Auswahl für den Fall, dass einmal mindestens zwei maximale Mengen an Knoten existieren, die in derselben Farbe gefärbt werden können. Die beiden anderen Heuristiken basieren auf einer Reihenfolge von Knoten, die auch nicht eindeutig ist. Bei der Implementierung der Heuristiken wurde jeweils nur ein resultierendes Modell ermittelt. Immerhin wurde bei allen Berechnungen auf unseren Beispielen von den Heuristiken stets ein Modell mit minimaler zahl an Variablen getroffen. In dieser Hinsicht sind die Heuristiken schon sehr erfolgsversprechend.
 
 
 
@@ -625,7 +627,7 @@ Wie sich unschwer erkennen lässt, sind alle Heuristiken bezogen auf die ausgew�
 	
 \begin{figure}
 	\caption{Verteilung der nodes und states von Modell 6}
-	%\label{first-diagram}
+	\label{first-diagram}
 	\begin{center}
 		\scalebox{2}{
 			\makebox[0pt]{
@@ -1095,7 +1097,6 @@ Wie sich unschwer erkennen lässt, sind alle Heuristiken bezogen auf die ausgew�
 
 \begin{figure}
 	\caption{Verteilung der nodes und states von Modell 18}
-	\label{last-diagram}
 	\label{model18}
 	\begin{center}
 		\scalebox{2}{
@@ -1194,6 +1195,7 @@ Wie sich unschwer erkennen lässt, sind alle Heuristiken bezogen auf die ausgew�
 \begin{figure}
 	\caption{Tabelle für Modell \texttt{in\_family.prism}}
 	\label{familymodel}
+	\label{last-diagram}
 	\begin{center}
 		\makebox[0pt]{
 			\begin{tabular}{|l|cc|cc|r|}
@@ -1213,12 +1215,13 @@ Wie sich unschwer erkennen lässt, sind alle Heuristiken bezogen auf die ausgew�
 
 \subsection{Offene Fragestellungen}
 
-Wir wollen einmal kurz auf eine offene Fragestellungen eingehen, die näher untersucht werden könnte:
-Die vorgestellen Heuristiken zum finden einer Graphfärbung führen nicht zu eine eindeutigen Ergebnis.
+Wir wollen einmal kurz auf eine offene Fragestellung eingehen, die näher untersucht werden könnte:
+Die vorgestellen Heuristiken zum Finden einer Graph\-färbung führen nicht zu einem eindeutigen Ergebnis.
 Vielmehr erlauben sie nichtdeterministische Entscheidungen zum Beispiel beim Auswählen eines Knotens mit kleinster Nachbarschaft bei Variante \textins{Remove Nodes}.
 Daher wäre es interessant zu einer Heuristik einmal alle möglichen entstehenden Modelle aufzulisten, die bei verschiedener Auflösung des enthaltenenen Nichtdeterminismus entstehen können.
 Ein Extremfall, welcher dabei auftreten könnte, wäre, dass eine Heuristik allein bereits Modelle erzeugt, die sich über das gesamte Intervall der Anzahl von nodes bzw. states erstreckt.
-Eine solche Heuristik wäre nutzlos innerhalb aller Modelle mit minimaler Zahl an Variablen, ein optimales zu finden, wohl aber eventuell nützlich, um überhaupt ein Modell mit minimaler Zahl an Variablen zu finden.
+Eine solche Heuristik wäre nutzlos, um innerhalb aller Modelle mit minimaler Zahl an Variablen ein optimales zu finden, wohl aber eventuell nützlich, um überhaupt ein Modell mit minimaler Zahl an Variablen zu finden.
+Des Weiteren stellt sich die Frage, unter welchen Bedingungen die vorgestellten Heuristiken zu einem reduzierten Modell führen, welches mehr Variablen verwendet als erforderlich und wie ggf. solche Fälle in Software geschickt erkannt werden können.
 
 
 \printbibliography
