@@ -220,7 +220,7 @@ Ein Zustand des Modells ist hierbei eine konkrete Zuweisung von Werten zu jeder 
 Wir gehen weiterhin von genau einem sogenanntem Modul aus, welches aus einzelnen Transitionen besteht, die der Lesbarkeit wegen Namen wie \textit{goto\_1} oder \textit{reset1} tragen können.
 Eine Transition besteht aus einer Eintrittsbedingung, z.B. \texttt{ cf = 0 \& a = 0} im Falle von \textit{goto\_1}, welche erfüllt sein muss ($cf$ und $a$ werden gelesen), damit die Transition auf einen Zustand anwendbar ist sowie einer Wahrscheinlichkeitsverteilung für Folgezustandsbedingungen:
 Beispielsweise wird bei Eintreten von Transition \textit{goto\_1} mit Wahrscheinlichkeit $0.4$ der Zustand eingenommen, in welchem sich $cf$ zu $1$ ändert und $a$ zu $1$, mit Wahrscheinlichkeit $0.6$ der Zustand, in welchem sich $cf$ zu $2$ ändert und $b$ zu $3$. In letzterem Fall werden $cf$ und $b$ geschrieben.
-Mit der Zeile \texttt{formula failure = (e = 0)} wird eine Eigenschaft beschrieben, ein Zustand des Modells jeweils erfüllt oder nicht. Somit wird eine letztlich Teilmenge von Zuständen ausgezeichnet. Mit der Verwendung dieser in PCTL-querys lässt sich ein Modell mit dem PRISM model checker auf die gewünschte Eigenschaft hin untersuchen.
+Mit der Zeile \texttt{formula failure = (e = 0)} wird eine Eigenschaft beschrieben, welche ein Zustand des Modells jeweils erfüllt oder nicht. Somit wird letztlich eine Teilmenge von Zuständen ausgezeichnet. Mit der Verwendung dieser in PCTL-querys lässt sich ein Modell mit dem PRISM model checker auf eine gewünschte Eigenschaft hin untersuchen.
 
 \paragraph{Annahmen an das Modell}
 
@@ -248,7 +248,7 @@ Um mit der Reduktion von einem Modell zu beginnen, gehen wir also davon aus, das
 	\item Variablen mit jeweils endlichem Wertebereich $cf \in D_{cf}, x_1 \in D_{1}, x_2, \in D_2, \dots, x_n \in D_n$.
 	\item endlich viele Transitionen $t_1, t_2, \dots , t_m$ als Paare von Eintrittsbedingung und Tupel der Folgezustandsbedingungen:
 	\[t_i = (f^{enter}_i, (f^{leave}_{i,1}, f^{leave}_{i,2}, \dots , f^{leave}_{i,k_i}))\]
-	\item eine Startzustandsbedingung siehe Zeile 10 des Beispielmodells (Abbildung \ref{bspeingspr}). $D_{cf}$
+	\item eine Startzustandsbedingung siehe Zeile 10 des Beispielmodells (Abbildung \ref{bspeingspr}).
 \end{itemize}
 
 In der vorangegangenen Forschungsarbeit \cite{dubslaff2019breaking} wurden alle Folgezustandsbedingungen einer Transition zu einer Transition zusammengefasst.
@@ -295,12 +295,12 @@ Dann erhalten wir unmittelbar einen Multigraphen $G = (V,E,\cdot_{\mathrm{from}}
 
 Es sei bemerkt, dass (b) und (c) eindeutig definiert sind aufgrund unserer Annahmen. Wir operieren insofern auf einem semantischen Aspekt des Modells, als dass wir den Zustandsraum $D_{cf}$ einbeziehen müssen. Ansonsten haben wir das Modell auf seinen syntaktischen Aspekt, bestehend aus einem System von Transitionen, reduziert.
 
-Es sei noch angemerkt, warum an dieser Stelle ein Multigraph und kein gewöhnlicher gerichteter Graph unter Verzicht auf Mehrfachkanten verwendet wird: Der Grund liegt in der Eigabesprache. Die Elemente von $D_{cf}$ entsprechen der Gesamtheit aller Knoten des Programmgraphen, vergleichbar mit gesetzten Haltepunkten bei der Benutzung eines gewöhnlichen Debuggers für imperative Programmiersprachen. Es kann nun mehrere Transitionen des ursprünglichen Modells zwischen konkreten Knoten mit Werten \texttt{cf = }$c_1$ und \texttt{cf = }$c_2$ geben oder auch eine Transition mit \texttt{cf = }$c_1$ in der Eintrittsbedingung und \texttt{cf = }$c_2$ in mindestens zwei Folgezustandsbedingungen. In beiden Fällen ergeben sich zwei oder mehr Kanten von $c_1$ nach $c_2$ in $G$.
+Es sei noch angemerkt, warum an dieser Stelle ein Multigraph und kein gewöhnlicher gerichteter Graph unter Verzicht auf Mehrfachkanten verwendet wird: Der Grund liegt in der Eingabesprache. Die Elemente von $D_{cf}$ entsprechen der Gesamtheit aller Knoten des Programmgraphen, vergleichbar mit gesetzten Haltepunkten bei der Benutzung eines gewöhnlichen Debuggers für imperative Programmiersprachen. Es kann nun mehrere Transitionen des ursprünglichen Modells zwischen konkreten Knoten mit Werten \texttt{cf = }$c_1$ und \texttt{cf = }$c_2$ geben oder auch eine Transition mit \texttt{cf = }$c_1$ in der Eintrittsbedingung und \texttt{cf = }$c_2$ in mindestens zwei Folgezustandsbedingungen. In beiden Fällen ergeben sich zwei oder mehr Kanten von $c_1$ nach $c_2$ in $G$.
 Natürlich lässt sich ein solcher Multigraph durch Einfügen zusätzlicher Knoten in einen Graphen ohne Mehrfachkanten überführen. Dies bei der Implementierung so umzusetzen, bringt jedoch keine Vorteile hinsichtlich Performance.
 
 \subsection{Live Range Analysis}
 
-Wenn ein Compiler in der Phase der Codegenerierung für die finale Plattform lokale Variablen aus Funktionen den Registern einer CPU zuweisen muss, so ist es für die Performance zur Laufzeit der entstehenden Anwendung sehr bedeutend, wie geschickt stets diejenigen Variablen in Registern gehalten werden, die als nächstes gelesen werden müssen \cite{Krau14}. % find better reference
+Wenn ein Compiler in der Phase der Codegenerierung für die finale Plattform lokale Variablen aus Funktionen den Registern einer CPU zuweisen muss, so ist es für die Performance zur Laufzeit der entstehenden Anwendung sehr bedeutend, wie geschickt stets diejenigen Variablen auf die Register verteilt werden, die als nächstes gelesen werden müssen \cite{Krau14}. % find better reference
 Zugriffe auf Cache oder Arbeitsspeicher dagegen gehen mit erheblichen Wartezeiten einher. Der auf der Hand liegende erste Schritt zur Steigerung der Laufzeitperformance ist es daher, keine Register mit solchen Variablen, die gar nicht mehr gebraucht werden, belegt und weiterhin reserviert zu halten, während dort schon neue Variablen gespeichert werden können.
 Wir beschreiben im Folgenden allgemein die Live Range Analysis, die genau dieses Problem löst und beziehen das Verfahren dabei auf unsere jeweils als Multigraph vorliegenden Programme:
 
@@ -309,16 +309,17 @@ Jede einzelne Position im Programm zwischen Transitionen fassen wir als einen Kn
 Dann sagen wir: 
 
 \begin{definition}[Liveness]
-	Eine Variable \textit{x} heißt \textit{live} in einem Knoten \textit{v}, wenn es von $v$ einen Pfad in $G$ gibt, auf welchem $x$ gelesen wird, ohne dass zuvor auf diesem Pfad $x$ geschrieben wird. Wir schreiben dann $\textrm{live}_x(v)$ und sonst $\neg \textrm{live}_x(v)$.
+	Eine Variable \textit{x} heißt \textit{live} in einem Knoten \textit{v}, wenn es einen in $v$ beginnenden Pfad in $G$ gibt, auf welchem $x$ gelesen wird, ohne dass zuvor auf diesem Pfad $x$ geschrieben wird. Wir schreiben dann $\textrm{live}_x(v)$ und sonst $\neg \textrm{live}_x(v)$.
 \end{definition}
 
 Auch wenn der Begriff Pfad allgemein bekannt ist, soll dieser für Multigraphen einmal kurz definiert werden:
 
 \begin{definition}
-	Sei \mgtup{} ein Multigraph. Wir nennen ein Tupel $(v_0,v_1, \dots, v_n)$ von Knoten einen Pfad in $G$, wenn für jede zwei aufeinander folgenden Knoten eine solche Kante existiert:
+	Sei \mgtup{} ein Multigraph. Wir nennen ein Tupel $(v_0,v_1, \dots, v_n)$ von Knoten einen \emph{Pfad} in $G$, wenn für jede zwei aufeinander folgenden Knoten eine solche Kante existiert:
 	\begin{equation*}
 		\forall i \in \{0, \dots, n-1\} \exists e \in E : v_i = e\subfrom \land v_{i+1} = e\subto
 	\end{equation*}
+	Wir sagen, dass ein solcher Pfad in einem Knoten $v$ \emph{beginnt}, wenn $v_0 = v$.
 \end{definition}
 
 Aber kommen wir zurück zum Begriff Liveness. Man könnte auch sagen, ist eine Variable live, so wird sie eventuell noch gebraucht. Für den Fall, dass eine Variable auf allen Pfaden jeweils entweder nicht mehr gelesen wird, oder vor jedem Lesen erneut geschrieben wird, so wird offensichtlich das Zwischenergebnis, welches in der Variablen abgelegt ist, auf allen weiterführenden Pfaden nicht mehr gebraucht. Per Definition ist diese Variable dann nicht live, wir nennen sie dann auch \textit{dead}. In so einem Fall ließe sich ein Register wiederverwenden ab dem Zeitpunkt, zu dem die dort abgelegte Variable dead wird, man kann auch sagen, wenn sie ihre \textit{live range} verlässt.
@@ -330,8 +331,8 @@ Aber kommen wir zurück zum Begriff Liveness. Man könnte auch sagen, ist eine V
 	\]
 \end{definition}
 
-Zweck der Live Range Analysis ist es nun, durch Berechnung von $\textrm{live\_range}(x)$ für jede Variable $x$ festzustellen, dass sich Variablen $x_1, x_2, x_3 \dots$ mit paarweise disjunkten Mengen $\textrm{live\_range}(x_1), \textrm{live\_range}(x_2), \textrm{live\_range}(x_3), \dots$ ein und dasselbe Register teilen können, wenn wir uns im Kontext der Registerallokation im Compilerbau befinden. Bezogen auf unseren Anwendungsfall fassen wir solche Variablen zu einer neuen Variablen zusammen.
-Eine allgemein bekannte, einfache iterative Methode zur Berechnung der Mengen $\textrm{LIVE}_v \coloneqq \{ x \in \mathrm{Var} \mid \textrm{live}_x(v) \}$ wollen wir der Vollständigkeit halber hier kurz wiedergeben \cite{liveanalysis}:
+Zweck der Live Range Analysis ist es nun, durch Berechnung von $\textrm{live\_range}(x)$ für jede Variable $x$ festzustellen, welche Variablen $x_1, x_2, x_3 \dots$  paarweise disjunkte Mengen $\textrm{live\_range}(x_1), \textrm{live\_range}(x_2), \textrm{live\_range}(x_3), \dots$ aufweisen und sich somit ein und dasselbe Register teilen können, wenn wir uns im Kontext der Registerallokation im Compilerbau befinden. Bezogen auf unseren Anwendungsfall fassen wir solche Variablen zu einer neuen Variablen zusammen.
+Eine allgemein bekannte, einfache iterative Methode \cite{liveanalysis} zur Berechnung der Mengen $\textrm{LIVE}_v \coloneqq \{ x \in \mathrm{Var} \mid \textrm{live}_x(v) \}$ wollen wir der Vollständigkeit halber hier kurz wiedergeben:
 
 In jeder Transition $e$ können einerseits Variablen gelesen werden, womit diese unmittelbar vor diesem Schritt live werden. Andererseits können Variablen geschrieben werden. Dadurch werden diese an der Programmposition zuvor dead. Dieses Generieren bzw. Aufheben von Liveness drücken wir mithilfe von Mengen $\mathrm{GEN}_{e}$ und $\mathrm{KILL}_{e}$ für jede Kante $e$ aus:
 
@@ -340,16 +341,16 @@ In jeder Transition $e$ können einerseits Variablen gelesen werden, womit diese
 \mathrm{KILL}_{e} & \coloneqq \{x \in \mathrm{Var} \mid \text{$x$ geschrieben, nicht zuvor $x$ gelesen in Transition $e$} \} \nonumber
 \end{align}
 
-Bezeichnen wir weiterhin mit $\mathrm{LIVE}^{in}_{e}$ die Menge der Variablen, welche live sind unmittelbar vor Schritt $e$ und mit $\mathrm{LIVE}^{out}_{e}$ die Menge der Variablen, welche live sind unmittelbar nach Schritt $e$ im Programmfluss. Dann können wir $\mathrm{LIVE}^{in}_{e}$ mithilfe von $\mathrm{GEN}_{e}$ und $\mathrm{KILL}_{e}$ aus der Menge der live Variablen nach Schritt $e$ ausdrücken:
+Bezeichnen wir weiterhin mit $\mathrm{LIVE}^{in}_{e}$ die Menge der Variablen, welche live sind unmittelbar vor Schritt $e$ und mit $\mathrm{LIVE}^{out}_{e}$ die Menge der Variablen, welche live sind unmittelbar nach Schritt $e$ im Programmfluss. Dann können wir $\mathrm{LIVE}^{in}_{e}$ mithilfe von $\mathrm{GEN}_{e}$ und $\mathrm{KILL}_{e}$ aus der Menge der Variablen, die nach Schritt $e$ live sind, ausdrücken:
 
 \begin{equation*}
 \mathrm{LIVE}^{in}_{e} = \mathrm{GEN}_{e} \cup \big( \mathrm{LIVE}^{out}_{e} \setminus \mathrm{KILL}_{e} \big) 
 \end{equation*}
 
-An einer Position werden verschiedene Möglichkeiten des weiteren Programmverlaufs entsprechend akkumuliert:
+An einer jeden Programmposition (Knoten von $G$) werden verschiedene Möglichkeiten des weiteren Programmverlaufs entsprechend akkumuliert:
 
 \begin{equation*}
-\mathrm{LIVE}^{out}_{e} = \bigcup_{f \in E \textrm{ mit } f_1 = e\subto} {\mathrm{LIVE}^{in}_{f}  }
+\mathrm{LIVE}^{out}_{e} = \bigcup_{f \in E \textrm{ mit } f\subfrom = e\subto} {\mathrm{LIVE}^{in}_{f}  }
 \end{equation*}
 
 Für den Fall eines Terminalzustandes $v \in V$ und einer dort endenden Kante $e \in E, e\subto = v$ ergibt sich die Menge $\mathrm{LIVE}^{out}_{e} = \emptyset$ entsprechend zur leeren Menge.
@@ -359,7 +360,7 @@ Es ist aus der Literatur wohlbekannt, dass bei endlichen Graphen mit Mehrfachkan
 Wir können zwei verschiedene Variablen $x, y$ stets dann zu einem Register (bzw. zu einer Variablen) zusammenfassen, wenn $\textrm{live\_range}(x) \cap \textrm{live\_range}(y) = \emptyset $.
 %Wie im Speziellen die Live Range Analysis zur Modellreduktion angewandt werden kann, soll im Folgenden konkretisiert werden:
 
-Gehen wir von unseren Modellen aus, so erfolgt das Zusammenfassen von Variablen $x_1, \dots , x_n$ durch Festlegen eines neuen gemeinsamen Namens und durch Vereinigung der Definitionsbereiche: Wir ersetzen die Deklarationen von $x_1, \dots , x_n$ durch die Deklaration von $y \in (D_{x_1} \cup \dots \cup D_{x_n})$. Wir ersetzen im originalen Modell jedes Vorkommen von $x_i$ durch $y$. Nach der sytaktischen Ersetzung aller Variablennamen können logische Widersprüche entstehen, einerseits in der Startzustandsbedingung (siehe Zeile 10 in Abbildung \ref{bspeingspr}), andererseits in jeder Folgezustandsbedigung einer Transition: Stellen wir uns vor eine solche Bedingung hat die Form $x_1 = 1 \land x_2 = 5$ und seien $x_1$ und $x_2$ Variablen, die wir zusammenfassen zu $y$. Nach stupidem Ersetzen der Variablennamen ergibt sich die immer falsche Bedingung $y = 1 \land y = 5$. Jedoch bemerken wir, dass an jeder solchen Stelle immer nur entweder $x_1$ oder $x_2$ live ist. Der Wert der jeweils anderen Variable ist irrelevant und kann aus der ursprünglichen Bedingung gestrichen werden. So bleibt von der ursprünglichen Bedingung beispielsweise $x_1 = 1$ übrig und im resultierenden Modell erhalten wir $y = 1$ als Bedingung.
+Gehen wir von unseren Modellen aus, so erfolgt das Zusammenfassen von Variablen $x_1, \dots , x_n$ durch Festlegen eines neuen gemeinsamen Namens und durch Vereinigung der Definitionsbereiche: Wir ersetzen die Deklarationen von $x_1, \dots , x_n$ durch die Deklaration von $y \in (D_{x_1} \cup \dots \cup D_{x_n})$. Wir ersetzen im originalen Modell jedes Vorkommen von $x_i$ durch $y$. Nach der sytaktischen Ersetzung aller Variablennamen können logische Widersprüche entstehen, einerseits in der Startzustandsbedingung (siehe Zeile 10 in Abbildung \ref{bspeingspr}), andererseits in jeder Folgezustandsbedigung einer Transition: Stellen wir uns vor eine solche Bedingung hat die Form $x_1 = 1 \land x_2 = 5$ und seien $x_1$ und $x_2$ Variablen, die wir zusammenfassen zu $y$. Nach stupidem Ersetzen der Variablennamen ergibt sich die immer falsche Bedingung $y = 1 \land y = 5$. Jedoch bemerken wir, dass an jeder solchen Stelle immer nur entweder $x_1$ oder $x_2$ live ist. Der Wert der jeweils anderen Variable ist irrelevant und kann aus der ursprünglichen Bedingung gestrichen werden. So bleibt von der ursprünglichen Bedingung beispielsweise $x_1 = 1$ übrig und im resultierenden Modell erhalten wir $y = 1$ als Bedingung. In Bedingungen müssen also lediglich die Subformeln eliminiert werden, welche sich auf Variablen beziehen, die dead sind. In der Startzustandsbedingung kann es dann auftreten, dass Variablen bei Programmstart einen undefinierten Wert haben, nämlich genau in dem Fall, dass eine Variable dead ist. Um zu verhindern, dass PRISM in Folge dessen auf einem Modell mit mehr Startzuständen beim reduzierten Modell als beim originalen Modell operiert, legen wir für betreffende Variablen einen Startwert fest. Dieser kann beliebig sein.
 
 \begin{comment}
 	\subsection{Modellreduktion mittels Live Range Analysis}
@@ -380,11 +381,11 @@ Gehen wir von unseren Modellen aus, so erfolgt das Zusammenfassen von Variablen 
 \subsection{Graphfärbungen}
 
 Nun soll es jedoch nicht Ziel sein, lediglich zwei Variablen herauszugreifen und zusammenzuführen, sondern solange Variablen zusammenzuführen, bis es keine weiteren Reduktionen mehr gibt.
-Von diesen maximalen Reduktionen wollen wir dann diese betrachten, bei denen die Zahl der übrigen Variablen am kleinsten ist.
+Von diesen maximalen Reduktionen wollen wir dann solche betrachten, bei denen die Zahl der übrigen Variablen am kleinsten ist.
 Dazu bilden wir einen ungerichteten Graphen $H=(\mathrm{Var}, F)$. Dabei ist die Menge der Knoten lediglich die Menge $\mathrm{Var}$ von Variablen.
-Zwei Variablen verbindet eine Kante genau dann, wenn diese an irgendeinem Knoten des Programmgraphen gleichzeitig live sind. Dies entspricht genau dem Fall, wo die zwei Variablen nicht zusammengeführt werden können.
+Zwei Variablen verbindet eine Kante genau dann, wenn diese an irgendeinem Knoten des Programmgraphen gleichzeitig live sind. Dies entspricht genau dem Fall, wo die zwei Variablen nicht zusammengeführt werden dürfen.
 \[
-\{x,y\} \in F \Leftrightarrow \exists v \in D_{cf} : \{x, y\} \subseteq \textrm{LIVE}_v 
+\{x,y\} \in F :\Leftrightarrow x \neq y \land \exists v \in D_{cf} : \{x, y\} \subseteq \textrm{LIVE}_v 
 \]
 
 Das Finden einer maximalen Reduktion der Variablen ist identisch mit dem Problem, eine Färbung mit minimal vielen Farben für $H$ zu finden.
@@ -432,7 +433,7 @@ Wir berechnen nun nacheinander $K_2, K_3, K_4, \dots $ durch Zusammenführen ber
 for(b in (*$K_1$*)):
    for (k in (*$K_i$*)):
       if ((*$b \downarrow k$*) and (*$size(b \cup k) = i + 1$*)):
-         (*$K_{i+1} := K_{i+1} \cup (b \cup k)$*)
+         (*$K_{i+1} := K_{i+1} \cup \{(b \cup k)\}$*)
 \end{lstlisting}
 
 Durch das Zusammenführen mit einer Kombination $b$ aus $K_1$ wird die Kombination $k$ um genau $1$ größer. In Zeile 4 prüfen wir, dass eine Variable hinzugefügt wird, die bereits in $k$ enthalten ist.
@@ -523,10 +524,10 @@ Zu einer Menge von Variablenkombinationen können wir einfach alle möglichen re
 \newcommand{\rnh}{RemNod}
 
 Es werden nun drei Heuristiken zum Finden einer möglichst wenig Farben benötigenden Graphfärbung separat auf ein gegebenes originales Modell angewandt.
-Die drei resultierenden Modelle mit reduzierter Anzahl an Variablen vergleichen wir mit der Menge aller reduzierten Modelle mit kleinstmöglicher Zahl an Variablen.
+Die drei resultierenden Modelle mit reduzierter Anzahl an Variablen vergleichen wir mit der Menge aller reduzierten Modelle mit kleinstmöglicher Zahl an Variablen sowie mit dem originalen Modell.
 %Die Formulierung \textit{alle reduzierten Modelle mit kleinstmöglicher Zahl an Variablen} bezieht sich dabei natürlich auf unser beschriebenes Reduktionsverfahren.
 
-Genutzt wurden zur Validierung der Heuristiken mehrere ausgewählte, randomisiert generierte Modelle als originale Modelle. Der anschließende Vergleich beruht darauf, den PRISM model checker jeweils auf den verkleinerten Modellen auszuführen und die Zahl der nodes der MTBDD engine von PRISM sowie die Zahl der states aus dem Log auszulesen.
+Genutzt wurden zur Validierung der Heuristiken mehrere ausgewählte, randomisiert generierte Modelle als originale Modelle. Der anschließende Vergleich beruht darauf, den PRISM model checker jeweils auf den verkleinerten Modellen auszuführen und die Zahl der nodes der MTBDD Engine von PRISM sowie die Zahl der states aus dem Log auszulesen.
 Wir wollen zunächst die drei Heuristiken kurz beschreiben.
 
 \subsection{Heuristiken für Graphfärbungen}
@@ -621,109 +622,6 @@ Wie sich unschwer erkennen lässt, sind alle Heuristiken bezogen auf die ausgew�
 
 
 
-\begin{figure}
-	
-	\caption{Verteilung der nodes und states von Modell 6}
-	\label{first-diagram}
-	\label{nodes6}
-	\begin{center}
-	\scalebox{2}{
-	%\hspace{-14ex}
-	\makebox[0pt]{
-	\begin{tikzpicture}[scale=0.45]
-	\begin{axis}[
-	xlabel = {x},
-	ylabel = {Anzahl der Modelle},
-	xmin = 1706.7,
-	xmax = 2490.3,
-	ymin = 0,
-	ymax = 768,
-	legend pos = north west,
-	ymajorgrids = true,
-	grid style = dashed,
-	]
-	\path[name path=axis] (axis cs:0,0) -- (axis cs:1,0);
-	
-	\addplot[color = red!50, fill=red, fill opacity=0.5]
-	coordinates{
-		(1706.7, 0)(1771.99, 0)(1772, 1)(1821.99, 1)(1822, 2)(1830.99, 2)(1831, 3)(1841.99, 3)(1842, 4)(1847.99, 4)(1848, 5)(1859.99, 5)(1860, 6)(1876.99, 6)(1877, 7)(1880.99, 7)(1881, 9)(1882.99, 9)(1883, 10)(1885.99, 10)(1886, 11)(1891.99, 11)(1892, 12)(1892.99, 12)(1893, 13)(1897.99, 13)(1898, 14)(1903.99, 14)(1904, 15)(1906.99, 15)(1907, 16)(1909.99, 16)(1910, 19)(1911.99, 19)(1912, 21)(1917.99, 21)(1918, 23)(1918.99, 23)(1919, 24)(1924.99, 24)(1925, 25)(1925.99, 25)(1926, 26)(1926.99, 26)(1927, 27)(1927.99, 27)(1928, 28)(1932.99, 28)(1933, 29)(1934.99, 29)(1935, 30)(1939.99, 30)(1940, 32)(1941.99, 32)(1942, 33)(1949.99, 33)(1950, 35)(1951.99, 35)(1952, 36)(1952.99, 36)(1953, 37)(1953.99, 37)(1954, 38)(1956.99, 38)(1957, 40)(1959.99, 40)(1960, 42)(1961.99, 42)(1962, 44)(1963.99, 44)(1964, 45)(1968.99, 45)(1969, 46)(1969.99, 46)(1970, 48)(1973.99, 48)(1974, 50)(1976.99, 50)(1977, 52)(1977.99, 52)(1978, 53)(1983.99, 53)(1984, 58)(1986.99, 58)(1987, 59)(1989.99, 59)(1990, 60)(1992.99, 60)(1993, 61)(1993.99, 61)(1994, 65)(1999.99, 65)(2000, 66)(2001.99, 66)(2002, 69)(2002.99, 69)(2003, 71)(2003.99, 71)(2004, 72)(2005.99, 72)(2006, 75)(2006.99, 75)(2007, 77)(2008.99, 77)(2009, 78)(2009.99, 78)(2010, 80)(2013.99, 80)(2014, 81)(2014.99, 81)(2015, 82)(2017.99, 82)(2018, 84)(2018.99, 84)(2019, 86)(2019.99, 86)(2020, 89)(2020.99, 89)(2021, 90)(2021.99, 90)(2022, 91)(2023.99, 91)(2024, 93)(2025.99, 93)(2026, 95)(2026.99, 95)(2027, 96)(2027.99, 96)(2028, 97)(2030.99, 97)(2031, 99)(2031.99, 99)(2032, 101)(2032.99, 101)(2033, 103)(2033.99, 103)(2034, 104)(2034.99, 104)(2035, 106)(2035.99, 106)(2036, 108)(2036.99, 108)(2037, 109)(2037.99, 109)(2038, 111)(2038.99, 111)(2039, 112)(2039.99, 112)(2040, 114)(2040.99, 114)(2041, 117)(2041.99, 117)(2042, 119)(2042.99, 119)(2043, 120)(2043.99, 120)(2044, 122)(2045.99, 122)(2046, 123)(2046.99, 123)(2047, 124)(2047.99, 124)(2048, 125)(2048.99, 125)(2049, 127)(2049.99, 127)(2050, 129)(2052.99, 129)(2053, 130)(2053.99, 130)(2054, 132)(2054.99, 132)(2055, 133)(2055.99, 133)(2056, 135)(2060.99, 135)(2061, 136)(2061.99, 136)(2062, 138)(2063.99, 138)(2064, 140)(2064.99, 140)(2065, 141)(2067.99, 141)(2068, 142)(2068.99, 142)(2069, 143)(2069.99, 143)(2070, 146)(2071.99, 146)(2072, 147)(2072.99, 147)(2073, 148)(2073.99, 148)(2074, 152)(2075.99, 152)(2076, 154)(2076.99, 154)(2077, 156)(2078.99, 156)(2079, 157)(2080.99, 157)(2081, 159)(2081.99, 159)(2082, 161)(2082.99, 161)(2083, 163)(2083.99, 163)(2084, 164)(2084.99, 164)(2085, 165)(2085.99, 165)(2086, 168)(2086.99, 168)(2087, 169)(2087.99, 169)(2088, 171)(2088.99, 171)(2089, 172)(2089.99, 172)(2090, 174)(2090.99, 174)(2091, 176)(2091.99, 176)(2092, 177)(2092.99, 177)(2093, 179)(2093.99, 179)(2094, 182)(2095.99, 182)(2096, 185)(2097.99, 185)(2098, 188)(2098.99, 188)(2099, 190)(2099.99, 190)(2100, 193)(2100.99, 193)(2101, 194)(2101.99, 194)(2102, 198)(2102.99, 198)(2103, 199)(2104.99, 199)(2105, 201)(2105.99, 201)(2106, 204)(2106.99, 204)(2107, 205)(2107.99, 205)(2108, 206)(2108.99, 206)(2109, 208)(2111.99, 208)(2112, 210)(2112.99, 210)(2113, 211)(2113.99, 211)(2114, 212)(2114.99, 212)(2115, 214)(2115.99, 214)(2116, 217)(2117.99, 217)(2118, 218)(2119.99, 218)(2120, 220)(2120.99, 220)(2121, 223)(2121.99, 223)(2122, 225)(2122.99, 225)(2123, 226)(2123.99, 226)(2124, 230)(2124.99, 230)(2125, 231)(2125.99, 231)(2126, 234)(2126.99, 234)(2127, 237)(2127.99, 237)(2128, 238)(2128.99, 238)(2129, 240)(2129.99, 240)(2130, 243)(2130.99, 243)(2131, 244)(2131.99, 244)(2132, 247)(2133.99, 247)(2134, 250)(2135.99, 250)(2136, 254)(2136.99, 254)(2137, 256)(2138.99, 256)(2139, 257)(2139.99, 257)(2140, 258)(2140.99, 258)(2141, 261)(2142.99, 261)(2143, 264)(2143.99, 264)(2144, 265)(2144.99, 265)(2145, 266)(2145.99, 266)(2146, 267)(2146.99, 267)(2147, 268)(2147.99, 268)(2148, 270)(2148.99, 270)(2149, 271)(2150.99, 271)(2151, 272)(2151.99, 272)(2152, 274)(2152.99, 274)(2153, 276)(2153.99, 276)(2154, 277)(2155.99, 277)(2156, 278)(2156.99, 278)(2157, 279)(2157.99, 279)(2158, 281)(2158.99, 281)(2159, 285)(2160.99, 285)(2161, 292)(2161.99, 292)(2162, 293)(2163.99, 293)(2164, 294)(2165.99, 294)(2166, 295)(2166.99, 295)(2167, 299)(2167.99, 299)(2168, 301)(2168.99, 301)(2169, 304)(2169.99, 304)(2170, 305)(2170.99, 305)(2171, 309)(2171.99, 309)(2172, 310)(2172.99, 310)(2173, 313)(2174.99, 313)(2175, 316)(2175.99, 316)(2176, 318)(2176.99, 318)(2177, 319)(2177.99, 319)(2178, 321)(2178.99, 321)(2179, 322)(2179.99, 322)(2180, 323)(2181.99, 323)(2182, 324)(2184.99, 324)(2185, 325)(2185.99, 325)(2186, 326)(2187.99, 326)(2188, 327)(2188.99, 327)(2189, 329)(2189.99, 329)(2190, 331)(2190.99, 331)(2191, 332)(2191.99, 332)(2192, 334)(2192.99, 334)(2193, 336)(2193.99, 336)(2194, 338)(2195.99, 338)(2196, 340)(2196.99, 340)(2197, 342)(2198.99, 342)(2199, 346)(2200.99, 346)(2201, 347)(2201.99, 347)(2202, 348)(2202.99, 348)(2203, 349)(2203.99, 349)(2204, 350)(2204.99, 350)(2205, 351)(2206.99, 351)(2207, 352)(2209.99, 352)(2210, 355)(2210.99, 355)(2211, 356)(2211.99, 356)(2212, 358)(2212.99, 358)(2213, 361)(2222.99, 361)(2223, 363)(2223.99, 363)(2224, 364)(2225.99, 364)(2226, 365)(2230.99, 365)(2231, 366)(2233.99, 366)(2234, 367)(2235.99, 367)(2236, 368)(2237.99, 368)(2238, 369)(2239.99, 369)(2240, 370)(2240.99, 370)(2241, 371)(2244.99, 371)(2245, 372)(2247.99, 372)(2248, 373)(2253.99, 373)(2254, 374)(2255.99, 374)(2256, 375)(2258.99, 375)(2259, 377)(2260.99, 377)(2261, 378)(2263.99, 378)(2264, 379)(2314.99, 379)(2315, 380)(2340.99, 380)(2341, 382)(2403.99, 382)(2404, 383)(2424.99, 383)(2425, 384)(2490.3, 384)(2490.3, 0)
-	};
-	
-	\node[rotate=90] (source) at (axis cs:2000,309){\mmfh};
-	\node (destination) at (axis cs:2037,109){};
-	\draw[->](source)--(destination);
-	
-	\node[rotate=90] (source2) at (axis cs:2056,335){\wph};
-	\node (destination2) at (axis cs:2056,135){};
-	\draw[->](source2)--(destination2);	
-	
-	\node[rotate=90] (source3) at (axis cs:2038,511){\rnh};
-	\node (destination3) at (axis cs:2038,111){};
-	\draw[->](source3)--(destination3);
-	
-	
-	\addlegendentry{Modelle mit $\leq x$ nodes}
-	
-	\end{axis}
-	\end{tikzpicture}	%\caption{Verteilung der states von Modell 6}	%\label{}
-	\begin{tikzpicture}[scale=0.45]
-	\begin{axis}[
-	xlabel = {x},
-	ylabel = {Anzahl der Modelle},
-	xmin = 6948.1,
-	xmax = 8026.9,
-	ymin = 0,
-	ymax = 768,
-	legend pos = north west,
-	ymajorgrids = true,
-	grid style = dashed,
-	]
-	\path[name path=axis] (axis cs:0,0) -- (axis cs:1,0);
-	
-	\addplot[color = red!50, fill=red, fill opacity=0.5]
-	coordinates{
-		(6948.1, 0)(7037.99, 0)(7038, 2)(7038.99, 2)(7039, 4)(7039.99, 4)(7040, 5)(7040.99, 5)(7041, 7)(7041.99, 7)(7042, 8)(7046.99, 8)(7047, 10)(7047.99, 10)(7048, 13)(7048.99, 13)(7049, 15)(7049.99, 15)(7050, 17)(7050.99, 17)(7051, 18)(7051.99, 18)(7052, 19)(7052.99, 19)(7053, 20)(7053.99, 20)(7054, 22)(7054.99, 22)(7055, 25)(7055.99, 25)(7056, 27)(7056.99, 27)(7057, 28)(7057.99, 28)(7058, 29)(7059.99, 29)(7060, 32)(7060.99, 32)(7061, 33)(7061.99, 33)(7062, 36)(7062.99, 36)(7063, 40)(7063.99, 40)(7064, 42)(7064.99, 42)(7065, 43)(7065.99, 43)(7066, 44)(7067.99, 44)(7068, 46)(7069.99, 46)(7070, 47)(7070.99, 47)(7071, 51)(7071.99, 51)(7072, 52)(7072.99, 52)(7073, 56)(7074.99, 56)(7075, 59)(7076.99, 59)(7077, 61)(7078.99, 61)(7079, 62)(7079.99, 62)(7080, 63)(7080.99, 63)(7081, 66)(7081.99, 66)(7082, 67)(7082.99, 67)(7083, 71)(7083.99, 71)(7084, 73)(7084.99, 73)(7085, 77)(7085.99, 77)(7086, 78)(7087.99, 78)(7088, 80)(7088.99, 80)(7089, 83)(7089.99, 83)(7090, 87)(7090.99, 87)(7091, 89)(7091.99, 89)(7092, 91)(7092.99, 91)(7093, 94)(7097.99, 94)(7098, 95)(7098.99, 95)(7099, 96)(7099.99, 96)(7100, 97)(7101.99, 97)(7102, 98)(7102.99, 98)(7103, 99)(7103.99, 99)(7104, 102)(7106.99, 102)(7107, 104)(7107.99, 104)(7108, 106)(7109.99, 106)(7110, 111)(7110.99, 111)(7111, 113)(7112.99, 113)(7113, 115)(7113.99, 115)(7114, 116)(7115.99, 116)(7116, 119)(7116.99, 119)(7117, 121)(7117.99, 121)(7118, 122)(7118.99, 122)(7119, 123)(7119.99, 123)(7120, 124)(7120.99, 124)(7121, 125)(7122.99, 125)(7123, 128)(7123.99, 128)(7124, 131)(7125.99, 131)(7126, 133)(7127.99, 133)(7128, 134)(7130.99, 134)(7131, 138)(7131.99, 138)(7132, 139)(7132.99, 139)(7133, 140)(7133.99, 140)(7134, 141)(7134.99, 141)(7135, 143)(7135.99, 143)(7136, 144)(7137.99, 144)(7138, 145)(7139.99, 145)(7140, 146)(7140.99, 146)(7141, 147)(7141.99, 147)(7142, 148)(7142.99, 148)(7143, 149)(7144.99, 149)(7145, 150)(7146.99, 150)(7147, 153)(7147.99, 153)(7148, 154)(7148.99, 154)(7149, 155)(7149.99, 155)(7150, 156)(7150.99, 156)(7151, 157)(7151.99, 157)(7152, 158)(7153.99, 158)(7154, 159)(7155.99, 159)(7156, 160)(7157.99, 160)(7158, 161)(7159.99, 161)(7160, 163)(7162.99, 163)(7163, 164)(7164.99, 164)(7165, 165)(7172.99, 165)(7173, 166)(7174.99, 166)(7175, 168)(7175.99, 168)(7176, 169)(7176.99, 169)(7177, 170)(7179.99, 170)(7180, 172)(7188.99, 172)(7189, 173)(7190.99, 173)(7191, 175)(7193.99, 175)(7194, 176)(7196.99, 176)(7197, 177)(7201.99, 177)(7202, 178)(7203.99, 178)(7204, 179)(7205.99, 179)(7206, 180)(7209.99, 180)(7210, 182)(7210.99, 182)(7211, 183)(7214.99, 183)(7215, 184)(7219.99, 184)(7220, 185)(7220.99, 185)(7221, 186)(7221.99, 186)(7222, 188)(7224.99, 188)(7225, 190)(7225.99, 190)(7226, 191)(7228.99, 191)(7229, 192)(7233.99, 192)(7234, 196)(7234.99, 196)(7235, 197)(7236.99, 197)(7237, 201)(7237.99, 201)(7238, 203)(7239.99, 203)(7240, 204)(7240.99, 204)(7241, 207)(7241.99, 207)(7242, 208)(7243.99, 208)(7244, 210)(7244.99, 210)(7245, 212)(7245.99, 212)(7246, 213)(7246.99, 213)(7247, 215)(7247.99, 215)(7248, 216)(7248.99, 216)(7249, 218)(7249.99, 218)(7250, 220)(7250.99, 220)(7251, 221)(7252.99, 221)(7253, 223)(7254.99, 223)(7255, 225)(7255.99, 225)(7256, 226)(7257.99, 226)(7258, 227)(7259.99, 227)(7260, 229)(7260.99, 229)(7261, 231)(7262.99, 231)(7263, 234)(7264.99, 234)(7265, 236)(7266.99, 236)(7267, 237)(7267.99, 237)(7268, 238)(7268.99, 238)(7269, 241)(7271.99, 241)(7272, 242)(7272.99, 242)(7273, 244)(7274.99, 244)(7275, 245)(7278.99, 245)(7279, 247)(7279.99, 247)(7280, 248)(7280.99, 248)(7281, 249)(7281.99, 249)(7282, 250)(7282.99, 250)(7283, 251)(7283.99, 251)(7284, 252)(7288.99, 252)(7289, 253)(7289.99, 253)(7290, 254)(7290.99, 254)(7291, 255)(7292.99, 255)(7293, 257)(7293.99, 257)(7294, 258)(7294.99, 258)(7295, 260)(7296.99, 260)(7297, 261)(7298.99, 261)(7299, 262)(7302.99, 262)(7303, 263)(7305.99, 263)(7306, 264)(7306.99, 264)(7307, 266)(7307.99, 266)(7308, 267)(7308.99, 267)(7309, 268)(7310.99, 268)(7311, 270)(7314.99, 270)(7315, 271)(7316.99, 271)(7317, 272)(7320.99, 272)(7321, 273)(7322.99, 273)(7323, 274)(7327.99, 274)(7328, 275)(7328.99, 275)(7329, 276)(7329.99, 276)(7330, 277)(7332.99, 277)(7333, 278)(7334.99, 278)(7335, 279)(7340.99, 279)(7341, 280)(7346.99, 280)(7347, 281)(7348.99, 281)(7349, 282)(7362.99, 282)(7363, 284)(7426.99, 284)(7427, 285)(7448.99, 285)(7449, 286)(7494.99, 286)(7495, 287)(7503.99, 287)(7504, 288)(7516.99, 288)(7517, 290)(7521.99, 290)(7522, 292)(7522.99, 292)(7523, 293)(7525.99, 293)(7526, 295)(7528.99, 295)(7529, 296)(7539.99, 296)(7540, 297)(7544.99, 297)(7545, 301)(7547.99, 301)(7548, 302)(7548.99, 302)(7549, 304)(7549.99, 304)(7550, 307)(7550.99, 307)(7551, 308)(7554.99, 308)(7555, 309)(7562.99, 309)(7563, 310)(7565.99, 310)(7566, 311)(7566.99, 311)(7567, 312)(7568.99, 312)(7569, 314)(7577.99, 314)(7578, 315)(7581.99, 315)(7582, 316)(7582.99, 316)(7583, 317)(7587.99, 317)(7588, 318)(7589.99, 318)(7590, 319)(7590.99, 319)(7591, 320)(7591.99, 320)(7592, 321)(7601.99, 321)(7602, 322)(7602.99, 322)(7603, 323)(7606.99, 323)(7607, 324)(7608.99, 324)(7609, 326)(7613.99, 326)(7614, 327)(7617.99, 327)(7618, 328)(7625.99, 328)(7626, 330)(7629.99, 330)(7630, 331)(7631.99, 331)(7632, 333)(7635.99, 333)(7636, 334)(7636.99, 334)(7637, 335)(7639.99, 335)(7640, 336)(7651.99, 336)(7652, 337)(7663.99, 337)(7664, 339)(7664.99, 339)(7665, 340)(7665.99, 340)(7666, 341)(7667.99, 341)(7668, 343)(7669.99, 343)(7670, 347)(7671.99, 347)(7672, 349)(7673.99, 349)(7674, 351)(7677.99, 351)(7678, 352)(7681.99, 352)(7682, 353)(7689.99, 353)(7690, 354)(7693.99, 354)(7694, 355)(7702.99, 355)(7703, 357)(7703.99, 357)(7704, 358)(7706.99, 358)(7707, 359)(7707.99, 359)(7708, 360)(7709.99, 360)(7710, 362)(7713.99, 362)(7714, 365)(7717.99, 365)(7718, 366)(7723.99, 366)(7724, 367)(7725.99, 367)(7726, 368)(7734.99, 368)(7735, 369)(7735.99, 369)(7736, 370)(7737.99, 370)(7738, 371)(7738.99, 371)(7739, 373)(7740.99, 373)(7741, 375)(7746.99, 375)(7747, 376)(7780.99, 376)(7781, 377)(7784.99, 377)(7785, 378)(7790.99, 378)(7791, 379)(7792.99, 379)(7793, 380)(7858.99, 380)(7859, 381)(7860.99, 381)(7861, 382)(7934.99, 382)(7935, 383)(7936.99, 383)(7937, 384)(8026.9, 384)(8026.9, 0)
-	};
-	
-	\node[rotate=90] (source) at (axis cs:7107,304){\mmfh};
-	\node (destination) at (axis cs:7107,104){};
-	\draw[->](source)--(destination);
-	
-	\node[rotate=90] (source2) at (axis cs:7664,539){\wph};
-	\node (destination2) at (axis cs:7664,339){};
-	\draw[->](source2)--(destination2);	
-	
-	\node[rotate=90] (source3) at (axis cs:7315,471){\rnh};
-	\node (destination3) at (axis cs:7315,271){};
-	\draw[->](source3)--(destination3);
-	
-	
-	\addlegendentry{Modelle mit $\leq x$ states}
-	
-	\end{axis}
-	\end{tikzpicture}
-}
-
-}
-\end{center}
-
-\begin{center}
-\makebox[0pt]{
-	\begin{tabular}{|l|cc|cc|r|}
-		\hline
-		\textbf{} & \textbf{\#nodes} & \textbf{\% reduction} & \textbf{\#states} & \textbf{\% reduction} & \textbf{Zeit} \\
-		\hline
-		originales Modell & 2714 & { \color{gray} 0} & 3045 & { \color{gray} 0} & 12s \\
-		\hline
-		Maximum Merge First & XXX & YY & XXX & YY & TTT \\
-		Remove Nodes & XXX & YY & XXX & YY & TTT \\
-		Welsh-Powell & XXX & YY & XXX & YY & TTT \\
-		Minimum (red. Modelle) & XXX & YY & XXX & YY & \\
-		\hline
-	\end{tabular}
-}
-\end{center}
-\end{figure}
 	
 \begin{figure}
 	\caption{Verteilung der nodes und states von Modell 6}
